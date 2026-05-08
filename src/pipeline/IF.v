@@ -1,5 +1,0 @@
-module IF (
-    ports
-);
-    
-endmodule
