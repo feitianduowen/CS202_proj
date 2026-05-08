@@ -1,4 +1,4 @@
-module EX (
+module MEM (
     ports
 );
     

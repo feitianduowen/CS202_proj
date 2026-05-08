@@ -1,4 +1,4 @@
-module EX (
+module IF (
     ports
 );
     
