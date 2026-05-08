@@ -7,13 +7,14 @@ module WB (
     output wire [31:0] wb_data
 );
 
-    WriteBackMux u_write_back_mux (
-        .alu_y(alu_y),
-        .mem_rdata(mem_rdata),
-        .pc4(pc4),
-        .u_res(u_res),
-        .wb_sel(wb_sel),
-        .wb_data(wb_data)
-    );
+    always @(*) begin
+        case (wb_sel)
+            2'b00: wb_data = alu_y;
+            2'b01: wb_data = mem_rdata;
+            2'b10: wb_data = pc4;
+            2'b11: wb_data = u_res;
+            default: wb_data = alu_y;
+        endcase
+    end
 
 endmodule

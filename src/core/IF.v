@@ -9,13 +9,13 @@ module IF (
     output wire [31:0] inst
 );
 
-    PC u_pc (
-        .clk(clk),
-        .rst_n(rst_n),
-        .we(pc_we),
-        .pc_next(pc_next),
-        .pc(pc)
-    );
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            pc <= 32'b0;
+        end else if (we) begin
+            pc <= pc_next;
+        end
+    end
 
     assign inst_addr = pc;
     assign inst = inst_rdata;

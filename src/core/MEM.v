@@ -9,16 +9,6 @@ module MEM (
     output wire [31:0] rdata
 );
 
-    LoadStoreUnit u_load_store_unit (
-        .clk(clk),
-        .rst_n(rst_n),
-        .mem_we(mem_we),
-        .mem_re(mem_re),
-        .addr(addr),
-        .wdata(wdata),
-        .wstrb(wstrb),
-        .mem_rdata(32'b0),
-        .rdata(rdata)
-    );
+    assign rdata = mem_re ? mem_rdata : 32'b0;
 
 endmodule
