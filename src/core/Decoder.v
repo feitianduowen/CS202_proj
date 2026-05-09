@@ -5,7 +5,8 @@ module Decoder (
     output wire [6:0] funct7,
     output wire [4:0] rs1,
     output wire [4:0] rs2,
-    output wire [4:0] rd
+    output wire [4:0] rd,
+    output wire [31:0] imm
 );
 
     assign opcode = inst[6:0];
@@ -14,5 +15,10 @@ module Decoder (
     assign rs1 = inst[19:15];
     assign rs2 = inst[24:20];
     assign funct7 = inst[31:25];
+
+    ImmGen u_imm_gen (
+        .inst(inst),
+        .imm(imm)
+    );
 
 endmodule

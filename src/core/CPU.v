@@ -18,6 +18,7 @@ module CPU (
 );
 
     wire cpu_en;
+    w
     wire [31:0] pc;
     wire [31:0] inst;
     wire [31:0] rs1_data;

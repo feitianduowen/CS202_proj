@@ -4,7 +4,7 @@ module WB (
     input wire [31:0] pc4,
     input wire [31:0] u_res,
     input wire [1:0] wb_sel,
-    output wire [31:0] wb_data
+    output reg [31:0] wb_data
 );
 
     always @(*) begin

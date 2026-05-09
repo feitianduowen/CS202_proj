@@ -6,27 +6,82 @@ module RegFile (
     input wire [4:0] raddr2,
     input wire [4:0] waddr,
     input wire [31:0] wdata,
-    output wire [31:0] rdata1,
-    output wire [31:0] rdata2,
-    input wire [4:0] dbg_addr,
-    output wire [31:0] dbg_data
+    input [31:0] RamDout,// Data read from memory used for load instructions
+    input wire [6:0] opcode,
+    input wire [2:0] func3,
+    input MemtoReg,
+    output reg [31:0] rdata1,
+    output reg [31:0] rdata2
 );
 
-    reg [31:0] regs [0:31];
+    reg [31:0] register [0:31];
     integer i;
+
+    always @(*) begin
+        //sb
+        if (opcode == 7'b0100011 && func3 == 3'b000) begin
+            rdata2 = {{24{register[raddr2][7]}},register[raddr2][7:0]};
+        end
+        //sh
+        else if (opcode == 7'b0100011 && func3 == 3'b001) begin
+            rdata2 = {{16{register[raddr2][15]}},register[raddr2][15:0]};
+        end
+        //sw
+        else begin
+            rdata1 = register[raddr1];
+            rdata2 = register[raddr2];
+        end
+    end
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             for (i = 0; i < 32; i = i + 1) begin
-                regs[i] <= 32'b0;
+                register[i] <= 32'b0;
             end
         end else if (we && (waddr != 5'b0)) begin
-            regs[waddr] <= wdata;
+            if (MemtoReg) begin
+                    //lb
+                    if (opcode == 7'b0000011 && func3 == 3'b000) begin
+                        register[waddr] <= {{24{RamDout[7]}}, RamDout[7:0]};
+                    end
+                    //lh
+                    else if (opcode == 7'b0000011 && func3 == 3'b001) begin
+                        register[waddr] <= {{16{RamDout[15]}}, RamDout[15:0]};
+                    end
+                    //lbu
+                    else if (opcode == 7'b0000011 && func3 == 3'b100) begin
+                        register[waddr] <= {{24{1'b0}}, RamDout[7:0]};
+                    end
+                    //lhu
+                    else if (opcode == 7'b0000011 && func3 == 3'b101) begin
+                        register[waddr] <= {{16{1'b0}}, RamDout[15:0]};
+                    end
+                    else begin
+                        register[waddr] <= RamDout;
+                    end    
+                end
+                else begin
+                    //lb
+                    if (opcode == 7'b0000011 && func3 == 3'b000) begin
+                        register[waddr] <= {{24{wdata[7]}}, wdata[7:0]};
+                    end
+                    //lh
+                    else if (opcode == 7'b0000011 && func3 == 3'b001) begin
+                        register[waddr] <= {{16{wdata[15]}}, wdata[15:0]};
+                    end
+                    //lbu
+                    else if (opcode == 7'b0000011 && func3 == 3'b100) begin
+                        register[waddr] <= {{24{1'b0}}, wdata[7:0]};
+                    end
+                    //lhu
+                    else if (opcode == 7'b0000011 && func3 == 3'b101) begin
+                        register[waddr] <= {{16{1'b0}}, wdata[15:0]};
+                    end
+                    else begin
+                        register[waddr] <= wdata;
+                    end
+                end
         end
     end
-
-    assign rdata1 = (raddr1 == 5'b0) ? 32'b0 : regs[raddr1];
-    assign rdata2 = (raddr2 == 5'b0) ? 32'b0 : regs[raddr2];
-    assign dbg_data = (dbg_addr == 5'b0) ? 32'b0 : regs[dbg_addr];
 
 endmodule

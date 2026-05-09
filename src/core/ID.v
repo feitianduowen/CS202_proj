@@ -27,8 +27,6 @@ module ID (
     output wire auipc
 );
 
-    wire [2:0] imm_type_from_opcode;
-
     Decoder u_decoder (
         .inst(inst),
         .opcode(opcode),
@@ -36,14 +34,10 @@ module ID (
         .funct7(funct7),
         .rs1(rs1),
         .rs2(rs2),
-        .rd(rd)
-    );
-
-    ImmGen u_imm_gen (
-        .inst(inst),
-        .imm_type(imm_type_from_opcode),
+        .rd(rd),
         .imm(imm)
     );
+
 
     RegFile u_reg_file (
         .clk(clk),
@@ -54,9 +48,7 @@ module ID (
         .waddr(wb_waddr),
         .wdata(wb_wdata),
         .rdata1(rs1_data),
-        .rdata2(rs2_data),
-        .dbg_addr(5'b0),
-        .dbg_data()
+        .rdata2(rs2_data)
     );
 
     ControlUnit u_control_unit (
@@ -73,8 +65,7 @@ module ID (
         .jal(jal),
         .jalr(jalr),
         .lui(lui),
-        .auipc(auipc),
-        .imm_type(imm_type_from_opcode)
+        .auipc(auipc)
     );
 
 endmodule
