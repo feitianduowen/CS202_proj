@@ -67,7 +67,7 @@ module DatatRam #(
         end
     end
 
-    wire unused_rst_n;
-    assign unused_rst_n = rst_n;
+    // wire unused_rst_n;
+    // assign unused_rst_n = rst_n;
 
 endmodule

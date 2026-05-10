@@ -47,7 +47,7 @@ module TopMin #(
     assign cpu_rst_n = rst_n;
     assign run_en = small_switch[7];
 
-    assign board_input = {16'b0, small_switch, switch};
+    assign board_input = {24'b0, switch};
 
     assign dmem_dbg_addr = {24'b0, switch};// use switch as debug address
 
@@ -66,7 +66,6 @@ module TopMin #(
 
         .run_en(run_en),
         .step_en(step_pulse & ~run_en),
-        .board_input(board_input),
 
         .imem_rdata(imem_rdata),
         .dmem_rdata(dmem_rdata),
@@ -101,26 +100,59 @@ module TopMin #(
         .byte(4'b0000)
     );
 
-    DatatRam #(
-        .ADDR_WIDTH(14),
-        .DATA_WIDTH(32),
-        .INIT_FILE(DATA_INIT_FILE)
-    ) u_data_ram (
-        .clk(clk_100),
-        .rst_n(cpu_rst_n),
+    wire [31:0] ram_addr;
+    wire [31:0] ram_wdata;
+    wire [31:0] ram_rdata;
+    wire [3:0]  ram_wstrb;
+    wire        ram_we;
+    wire        ram_re;
 
-        .we(dmem_we),
-        .addr(dmem_addr),
-        .dout(dmem_rdata),
-        .din(dmem_wdata),
-        .byte(dmem_wstrb),
+MMIO u_mmio (
+    .clk(clk_100),
+    .rst_n(cpu_rst_n),
 
-        .we_b(1'b0),
-        .addr_b(dmem_dbg_addr),
-        .dout_b(dmem_dbg_rdata),
-        .din_b(32'b0),
-        .byte_b(4'b0000)
-    );
+    // CPU memory bus
+    .cpu_we(dmem_we),
+    .cpu_re(dmem_re),
+    .cpu_addr(dmem_addr),
+    .cpu_wdata(dmem_wdata),
+    .cpu_wstrb(dmem_wstrb),
+    .cpu_rdata(dmem_rdata),
+
+    // DataRam side
+    .ram_we(ram_we),
+    .ram_re(ram_re),
+    .ram_addr(ram_addr),
+    .ram_wdata(ram_wdata),
+    .ram_wstrb(ram_wstrb),
+    .ram_rdata(ram_rdata),
+
+    // Board IO
+    .switch(switch),
+    .LED(led)
+);
+
+DatatRam #(
+    .ADDR_WIDTH(14),
+    .DATA_WIDTH(32),
+    .INIT_FILE(DATA_INIT_FILE)
+) u_data_ram (
+    .clk(clk_100),
+    .rst_n(cpu_rst_n),
+
+    .we(ram_we),
+    .addr(ram_addr),
+    .din(ram_wdata),
+    .dout(ram_rdata),
+    .byte(ram_wstrb),
+
+    .we_b(1'b0),
+    .addr_b(dmem_dbg_addr),
+    .dout_b(dmem_dbg_rdata),
+    .din_b(32'b0),
+    .byte_b(4'b0000)
+);
+
 
     always @(*) begin
         case (small_switch[3:0])
@@ -139,8 +171,7 @@ module TopMin #(
         endcase
     end
 
-    assign led = display_data[7:0];
-    assign small_led = display_data[15:8];
+    assign small_led = small_switch;
 
     SevenSeg u_seven_seg (
         .clk(clk_100),

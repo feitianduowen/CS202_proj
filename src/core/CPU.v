@@ -4,14 +4,12 @@ module CPU (
     input wire run_en,
     input wire step_en,
 
-    input wire [31:0] board_input,
-
     input wire [31:0] imem_rdata,
     input wire [31:0] dmem_rdata,
 
-    output wire [31:0] pc_dbg,
-    output wire [31:0] wb_dbg,
-    output wire [31:0] reg_dbg,
+    output wire [31:0] pc_dbg,// program counter debug output
+    output wire [31:0] wb_dbg,// write back stage debug output
+    output wire [31:0] reg_dbg,// register file debug output
 
     output wire [31:0] imem_addr,
 
@@ -172,8 +170,5 @@ module CPU (
     assign wb_dbg = wb_data;
     assign reg_dbg = rs1_data;
 
-    // board_input 先保留，后面接 MMIO 时使用
-    wire [31:0] unused_board_input;
-    assign unused_board_input = board_input;
 
 endmodule
