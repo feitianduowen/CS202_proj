@@ -176,7 +176,7 @@ pass:
     sw x30, 64(x0)
 
 pass_loop:
-    beq x0, x0, pass_loop
+    beq x0, x0, pass_loop #最后应该停在这里，指令是0x00000063
 
 fail:
     addi x30, x0, 51
