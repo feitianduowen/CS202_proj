@@ -18,6 +18,10 @@ module TopMin #(
     output wire [7:0] tube_signal_left,
     output wire [7:0] tube_signal_right
 );
+    // debug: PC output for Uart Debug
+    assign dbg_pc = pcCurrent;
+    // debug: Reset merge (physical reset OR debug soft reset)
+    wire rst_combined = rst & ~cpu_dbg_reset;
 
     wire cpu_rst_n;
     wire run_en;

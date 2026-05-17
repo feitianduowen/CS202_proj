@@ -10,11 +10,12 @@ module InstRam #(
     input  wire [31:0] addr,
     output wire [31:0] dout,
 
-    // Debug / programming write port
-    input  wire [31:0] din,
-    input  wire        we,
-    input  wire [31:0] addr_b,
-    input  wire [3:0]  byte
+        // Debug port
+    input  wire        inst_dbg_en,
+    input  wire        inst_wr_en,
+    input  wire [31:0] inst_dbg_addr,
+    input  wire [31:0] inst_wr_data,
+    output wire [31:0] inst_rd_data
 );
 
     localparam WORD_ADDR_WIDTH = ADDR_WIDTH - 2;
@@ -25,12 +26,8 @@ module InstRam #(
     (* ram_style = "distributed" *)
     reg [DATA_WIDTH-1:0] mem [0:WORD_DEPTH-1];
 
-    wire [WORD_ADDR_WIDTH-1:0] read_addr;
-    wire [WORD_ADDR_WIDTH-1:0] write_addr;
-
-    assign read_addr  = addr[ADDR_WIDTH-1:2];
-    assign write_addr = addr_b[ADDR_WIDTH-1:2];
-
+    wire [31:0] addr_mux = inst_dbg_en ? inst_dbg_addr : addr;
+    wire [WORD_ADDR_WIDTH-1:0] word_addr = addr_mux[ADDR_WIDTH-1:2];
     integer i;
 
     initial begin
@@ -47,17 +44,15 @@ module InstRam #(
 
     // 异步读：PC 变化后，dout 立即跟着变化
     // 这和你现在的单周期 CPU 兼容
-    assign dout = mem[read_addr];
+    assign dout = mem[word_addr];
 
-    // Debug / UART / testbench 写指令口
     always @(posedge clk) begin
-        if (we) begin
-            if (byte[0]) mem[write_addr][7:0]   <= din[7:0];
-            if (byte[1]) mem[write_addr][15:8]  <= din[15:8];
-            if (byte[2]) mem[write_addr][23:16] <= din[23:16];
-            if (byte[3]) mem[write_addr][31:24] <= din[31:24];
+        if (inst_dbg_en && inst_wr_en) begin
+            mem[inst_dbg_addr[ADDR_WIDTH-1:2]] <= inst_wr_data;
         end
     end
+
+    assign inst_rd_data = dout;
 
     // 避免 rst_n 未使用 warning
     wire unused_rst_n;

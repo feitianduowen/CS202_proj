@@ -17,9 +17,14 @@ module CPU (
     output wire [31:0] dmem_wdata,
     output wire [3:0]  dmem_wstrb,
     output wire dmem_we,
-    output wire dmem_re
-);
+    output wire dmem_re,
 
+    input  wire [4:0]  dbg_reg_addr,
+    output wire [31:0] dbg_reg_data,
+    output wire [31:0] dbg_pc
+
+);
+    assign dbg_pc = pc_dbg;
     wire cpu_en;
 
     wire [31:0] pc;

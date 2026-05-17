@@ -22,6 +22,9 @@ module ID (
     output wire [3:0] alu_op,
     output wire [1:0] wb_sel,
 
+    input  wire [4:0]  dbg_reg_addr,
+    output wire [31:0] dbg_reg_data,
+
     output wire reg_we,
     output wire mem_we,
     output wire mem_re,
@@ -53,7 +56,9 @@ module ID (
         .waddr(wb_waddr),
         .wdata(wb_wdata),
         .rdata1(rs1_data),
-        .rdata2(rs2_data)
+        .rdata2(rs2_data),
+        .dbg_reg_addr(dbg_reg_addr),
+        .dbg_reg_data(dbg_reg_data)
     );
 
     ControlUnit u_control_unit (
