@@ -72,47 +72,71 @@ module CPU (
     wire [31:0] load_data;
     wire [31:0] wb_data;
 
-
         // ============================================================
     // Load state machine for synchronous DataRam
-    // load needs 3 phases in this CPU:
-    //   IDLE      : detect lw, send address
-    //   WAIT_RAM  : DataRam updates dout at this posedge
-    //   WB_LOAD   : write stable dmem_rdata into RegFile
     // ============================================================
+    localparam WB_ALU = 2'b00;
+    localparam WB_MEM = 2'b01;
+    localparam WB_PC4 = 2'b10;
+
     localparam LD_IDLE    = 2'd0;
     localparam LD_WAITRAM = 2'd1;
     localparam LD_WB      = 2'd2;
 
     reg [1:0] load_state;
 
+    reg [4:0]  load_rd_r;
+    reg [2:0]  load_funct3_r;
+    reg [31:0] load_addr_r;
+
     wire is_load_inst;
+    wire load_start;
+    wire load_active;
     wire load_wb_cycle;
+
     wire cpu_pc_we;
 
+    wire [31:0] mem_addr_eff;
+    wire [2:0]  mem_funct3_eff;
+    wire [4:0]  wb_waddr_eff;
+    wire [1:0]  wb_sel_eff;
+
     assign is_load_inst  = mem_re_dec;
+    assign load_active   = (load_state != LD_IDLE);
     assign load_wb_cycle = (load_state == LD_WB);
+    assign load_start    = cpu_en & (load_state == LD_IDLE) & is_load_inst;
+
 
     assign cpu_en = run_en | step_en;
 
-        always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            load_state <= LD_IDLE;
+            load_state    <= LD_IDLE;
+            load_rd_r     <= 5'd0;
+            load_funct3_r <= 3'd0;
+            load_addr_r   <= 32'd0;
         end else if (cpu_en) begin
             case (load_state)
                 LD_IDLE: begin
                     if (is_load_inst) begin
-                        load_state <= LD_WAITRAM;
+                        load_state    <= LD_WAITRAM;
+
+                        // 锁存这条 lw 的上下文
+                        load_rd_r     <= rd;
+                        load_funct3_r <= funct3;
+                        load_addr_r   <= alu_y;
                     end else begin
                         load_state <= LD_IDLE;
                     end
                 end
 
                 LD_WAITRAM: begin
+                    // DataRam 在这个阶段把 dout 更新出来
                     load_state <= LD_WB;
                 end
 
                 LD_WB: begin
+                    // 下一拍允许 PC 前进
                     load_state <= LD_IDLE;
                 end
 
@@ -125,18 +149,39 @@ module CPU (
 
     assign pc4 = pc + 32'd4;
     assign pc_next = take_branch ? branch_target : pc4;
-    // 非 load 指令：正常一个周期写回
-    // load 指令：只在 LD_WB 周期写回
-    assign reg_we_eff = reg_we_dec & cpu_en & (~is_load_inst | load_wb_cycle);
 
-    // store 只执行一次，避免 PC 被 hold 时重复写
-    assign mem_we_eff = mem_we_dec & cpu_en & (load_state == LD_IDLE);
+    // load 第一拍/等待拍不写寄存器；只有 LD_WB 写回
+    // 非 load 指令仍然单周期写回
+    assign reg_we_eff =
+        cpu_en & (
+            ((load_state == LD_IDLE) & reg_we_dec & ~is_load_inst) |
+            (load_state == LD_WB)
+        );
 
-    // load 期间保持读使能，PC 不动，所以 dmem_addr 也保持不动
-    assign mem_re_eff = mem_re_dec & cpu_en;
+    // store 只在空闲状态执行，避免 load stall 期间重复写
+    assign mem_we_eff = cpu_en & (load_state == LD_IDLE) & mem_we_dec;
 
-        // load 的前两拍不更新 PC，第三拍写回后才更新 PC
-    assign cpu_pc_we = cpu_en & (~is_load_inst | load_wb_cycle);
+    // load 期间保持读使能
+    assign mem_re_eff = cpu_en & (
+        ((load_state == LD_IDLE) & mem_re_dec) |
+        load_active
+    );
+
+    // load 期间，DataRam 地址和 funct3 使用锁存值
+    assign mem_addr_eff   = load_active ? load_addr_r   : alu_y;
+    assign mem_funct3_eff = load_active ? load_funct3_r : funct3;
+
+    // load 写回时，写回目标寄存器必须使用锁存的 rd
+    assign wb_waddr_eff = load_wb_cycle ? load_rd_r : rd;
+
+    // load 写回时，强制选择 MEM 数据
+    assign wb_sel_eff = load_wb_cycle ? WB_MEM : wb_sel;
+
+    // load 的前两拍不更新 PC；LD_WB 写回这一拍才更新 PC
+    assign cpu_pc_we = cpu_en & (
+        ((load_state == LD_IDLE) & ~is_load_inst) |
+        (load_state == LD_WB)
+    );
 
     IF u_if (
         .clk(clk),
@@ -155,7 +200,7 @@ module CPU (
         .inst(inst),
 
         .wb_we(reg_we_eff),
-        .wb_waddr(rd),
+        .wb_waddr(wb_waddr_eff),
         .wb_wdata(wb_data),
 
         .rs1_data(rs1_data),
@@ -179,7 +224,9 @@ module CPU (
         .jal(jal),
         .jalr(jalr),
         .lui(lui),
-        .auipc(auipc)
+        .auipc(auipc),
+        .dbg_reg_addr(dbg_reg_addr),
+        .dbg_reg_data(dbg_reg_data)
     );
 
     EX u_ex (
@@ -205,27 +252,27 @@ module CPU (
     );
 
     MEM u_mem (
-        .mem_we(mem_we_eff),
-        .mem_re(mem_re_eff),
-        .funct3(funct3),
-        .addr(alu_y),
-        .store_data(rs2_data),
-        .dmem_rdata(dmem_rdata),
+    .mem_we(mem_we_eff),
+    .mem_re(mem_re_eff),
+    .funct3(mem_funct3_eff),
+    .addr(mem_addr_eff),
+    .store_data(rs2_data),
 
-        .dmem_addr(dmem_addr),
-        .dmem_wdata(dmem_wdata),
-        .dmem_wstrb(dmem_wstrb),
-        .dmem_we(dmem_we),
-        .dmem_re(dmem_re),
-        .load_data(load_data)
+    .dmem_rdata(dmem_rdata),
+    .dmem_addr(dmem_addr),
+    .dmem_wdata(dmem_wdata),
+    .dmem_wstrb(dmem_wstrb),
+    .dmem_we(dmem_we),
+    .dmem_re(dmem_re),
+    .load_data(load_data)
     );
 
     WB u_wb (
-        .alu_y(alu_y),
-        .mem_rdata(load_data),
-        .pc4(pc4),
-        .wb_sel(wb_sel),
-        .wb_data(wb_data)
+    .alu_y(alu_y),
+    .mem_rdata(load_data),
+    .pc4(pc4),
+    .wb_sel(wb_sel_eff),
+    .wb_data(wb_data)
     );
 
     assign pc_dbg = pc;

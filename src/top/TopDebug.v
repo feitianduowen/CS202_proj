@@ -228,11 +228,11 @@ DatatRam #(
    .byte_b (4'b1111)
 );
 
-    wire step_pulse;
-    reg [31:0] display_data;
-    wire [31:0] board_input;
-    
-    assign board_input = {24'b0, switch};
+   wire step_pulse;
+   reg [31:0] display_data;
+   wire [31:0] board_input;
+   
+   assign board_input = {24'b0, switch};
 
 
 always @(*) begin
