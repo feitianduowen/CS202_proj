@@ -10,13 +10,13 @@ module DatatRam #(
     input  wire        we,
     input  wire [31:0] addr,
     input  wire [31:0] din,
-    output wire [31:0] dout,
+    output reg  [31:0] dout,
     input  wire [3:0]  byte,
 
     // Debug / programming port
     input  wire        we_b,
     input  wire [31:0] addr_b,
-    output wire [31:0] dout_b,
+    output reg  [31:0] dout_b,
     input  wire [31:0] din_b,
     input  wire [3:0]  byte_b
 );
@@ -24,9 +24,8 @@ module DatatRam #(
     localparam WORD_ADDR_WIDTH = ADDR_WIDTH - 2;
     localparam WORD_DEPTH = 1 << WORD_ADDR_WIDTH;
 
-    // 当前 CPU 是异步读，因此这里不要用 block。
-    // distributed 更适合异步读模板。
-    (* ram_style = "distributed" *)
+    // 同步读，适合综合成 BRAM
+    (* ram_style = "block" *)
     reg [DATA_WIDTH-1:0] mem [0:WORD_DEPTH-1];
 
     wire [WORD_ADDR_WIDTH-1:0] add_w;
@@ -47,13 +46,9 @@ module DatatRam #(
         end
     end
 
-    // 异步读：与你当前单周期 CPU 兼容
-    assign dout   = mem[add_w];
-    assign dout_b = mem[add_w_b];
-
-    // 合并写口，避免同一个 mem 被两个 always 写。
-    // Debug 端优先。后面 UART 写内存时，请暂停 CPU。
     always @(posedge clk) begin
+        // 写优先级：Debug 端优先
+        // Debug 写内存时，TopDebug 里最好暂停 CPU
         if (we_b) begin
             if (byte_b[0]) mem[add_w_b][7:0]   <= din_b[7:0];
             if (byte_b[1]) mem[add_w_b][15:8]  <= din_b[15:8];
@@ -65,9 +60,13 @@ module DatatRam #(
             if (byte[2]) mem[add_w][23:16] <= din[23:16];
             if (byte[3]) mem[add_w][31:24] <= din[31:24];
         end
+
+        // 同步读：地址给出后，下一个 clk 才输出
+        dout   <= mem[add_w];
+        dout_b <= mem[add_w_b];
     end
 
-    // wire unused_rst_n;
-    // assign unused_rst_n = rst_n;
+    wire unused_rst_n;
+    assign unused_rst_n = rst_n;
 
 endmodule

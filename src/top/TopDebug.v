@@ -127,11 +127,17 @@ module TopDebug  #(
    wire [31:0] wb_dbg;
    wire [31:0] reg_dbg;
 
+   wire debug_mem_busy;
+   wire cpu_run_en;
+
+assign debug_mem_busy = inst_dbg_en | dmem_dbg_en;
+assign cpu_run_en = cpu_step & ~debug_mem_busy;
+
    CPU u_cpu (
       .clk    (clk_100),
       .rst_n   (cpu_rst_n),
 
-      .run_en  (cpu_step),
+      .run_en  (cpu_run_en),
       .step_en (1'b0),
 
       .imem_rdata(imem_rdata),
