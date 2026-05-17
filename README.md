@@ -21,7 +21,7 @@
 | github classroom团队名称                                     | 这玩意随便吧                                |
 | ------------------------------------------------------------ | ------------------------------------------- |
 | 仓库地址                                                     | https://github.com/feitianduowen/CS202_proj |
-|                                                              | 朱晓涛                                      |
+| [person (xt-135)](https://github.com/xt-135)                 | 朱晓涛                                      |
 | [Siyu Wang (feitianduowen)](https://github.com/feitianduowen) | 王思宇                                      |
 | [这是人机在玩 (Shay-xyh)](https://github.com/Shay-xyh)       | 谢祎恒                                      |
 
