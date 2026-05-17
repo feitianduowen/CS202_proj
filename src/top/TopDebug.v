@@ -127,11 +127,49 @@ module TopDebug  #(
    wire [31:0] wb_dbg;
    wire [31:0] reg_dbg;
 
-   wire debug_mem_busy;
-   wire cpu_run_en;
+// ============================================================
+// Pause CPU while TestCase input triple is being updated.
+// Host writes:
+//   0x4000: case id
+//   0x4004: operand A
+//   0x4008: operand B
+// Release CPU only after 0x4008 is written.
+// ============================================================
+wire dbg_dmem_write;
+wire write_case_addr;
+wire write_op_a_addr;
+wire write_op_b_addr;
 
-assign debug_mem_busy = inst_dbg_en | dmem_dbg_en;
-assign cpu_run_en = cpu_step & ~debug_mem_busy;
+assign dbg_dmem_write = dmem_dbg_en & dmem_wr_en;
+
+assign write_case_addr = dbg_dmem_write & (dmem_dbg_addr == 32'h0000_4000);
+assign write_op_a_addr = dbg_dmem_write & (dmem_dbg_addr == 32'h0000_4004);
+assign write_op_b_addr = dbg_dmem_write & (dmem_dbg_addr == 32'h0000_4008);
+
+reg testcase_update_busy;
+
+always @(posedge clk_100 or negedge rst_n) begin
+    if (!rst_n) begin
+        testcase_update_busy <= 1'b0;
+    end else begin
+        // Host starts updating a testcase input group.
+        if (write_case_addr || write_op_a_addr) begin
+            testcase_update_busy <= 1'b1;
+        end
+
+        // Operand B is the last input word. After this write command finishes,
+        // dmem_dbg_en itself will go low, so CPU can run again.
+        if (write_op_b_addr) begin
+            testcase_update_busy <= 1'b0;
+        end
+    end
+end
+
+wire cpu_run_en;
+assign cpu_run_en = cpu_step
+                  & ~inst_dbg_en
+                  & ~dmem_dbg_en
+                  & ~testcase_update_busy;
 
    CPU u_cpu (
       .clk    (clk_100),
