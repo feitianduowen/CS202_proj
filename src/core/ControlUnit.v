@@ -15,7 +15,8 @@ module ControlUnit (
     output reg jal,
     output reg jalr,
     output reg lui,
-    output reg auipc
+    output reg auipc,
+    output reg custom_en // 硬件加速指令标记
 );
 
     localparam WB_ALU = 2'b00;
@@ -49,6 +50,7 @@ module ControlUnit (
         jalr = 1'b0;
         lui = 1'b0;
         auipc = 1'b0;
+        custom_en = 1'b0;
 
         case (opcode)
             7'b0110011: begin
@@ -148,6 +150,14 @@ module ControlUnit (
             7'b1110011: begin
                 // ECALL/EBREAK 暂时先不写寄存器
                 reg_we = 1'b0;
+            end
+
+            7'b0001011: begin
+                // 硬件加速指令
+                reg_we = 1'b1;      // 要写寄存器
+                alu_src = 1'b0;     // 用 rs2_data，不用立即数（实际只用 rs1）
+                wb_sel = WB_ALU;    // 写回走 ALU 通路（实际上会被 EX 阶段 MUX 替换）
+                custom_en = 1'b1;   // 标记为自定义指令
             end
 
             default: begin

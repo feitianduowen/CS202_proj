@@ -33,7 +33,8 @@ module ID (
     output wire jal,
     output wire jalr,
     output wire lui,
-    output wire auipc
+    output wire auipc,
+    output wire custom_en
 );
 
     Decoder u_decoder (
@@ -75,7 +76,8 @@ module ID (
         .jal(jal),
         .jalr(jalr),
         .lui(lui),
-        .auipc(auipc)
+        .auipc(auipc),
+        .custom_en(custom_en)
     );
 
 endmodule

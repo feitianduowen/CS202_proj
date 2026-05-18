@@ -13,8 +13,9 @@ module EX (
     input wire jalr,
     input wire lui,
     input wire auipc,
+    input wire custom_en,
 
-    output wire [31:0] alu_y,
+    output wire [31:0] ex_result,
     output wire [31:0] branch_target,
     output wire take_branch,
 
@@ -31,6 +32,8 @@ module EX (
 
     // LUI / AUIPC / I-type / Load / Store all need imm
     assign alu_b = (alu_src | lui | auipc) ? imm : rs2_data;
+
+    wire [31:0] alu_y;
 
     ALU u_alu (
         .a(alu_a),
@@ -54,5 +57,15 @@ module EX (
         .take_branch(take_branch),
         .target(branch_target)
     );
+
+    wire [31:0] custom_result;
+    
+    Accelerator u_Accelerator(
+        .rs1_data(rs1_data),
+        .funct3(funct3),
+        .result(custom_result)
+    );
+    
+    assign ex_result = custom_en ? custom_result : alu_y;
 
 endmodule

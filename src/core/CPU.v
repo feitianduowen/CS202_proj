@@ -56,6 +56,7 @@ module CPU (
     wire jalr;
     wire lui;
     wire auipc;
+    wire custom_en;
 
     wire reg_we_eff;
     wire mem_we_eff;
@@ -225,6 +226,7 @@ module CPU (
         .jalr(jalr),
         .lui(lui),
         .auipc(auipc),
+        .custom_en(custom_en),
         .dbg_reg_addr(dbg_reg_addr),
         .dbg_reg_data(dbg_reg_data)
     );
@@ -242,8 +244,9 @@ module CPU (
         .jalr(jalr),
         .lui(lui),
         .auipc(auipc),
+        .custom_en(custom_en),
 
-        .alu_y(alu_y),
+        .ex_result(alu_y),
         .branch_target(branch_target),
         .take_branch(take_branch),
         .zero(zero),
