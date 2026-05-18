@@ -165,8 +165,22 @@ always @(posedge clk_100 or negedge rst_n) begin
     end
 end
 
+reg [1:0] cpu_div;
+
+always @(posedge clk_100 or negedge rst_n) begin
+    if (!rst_n) begin
+        cpu_div <= 2'd0;
+    end else begin
+        cpu_div <= cpu_div + 2'd1;
+    end
+end
+
+wire cpu_tick;
+assign cpu_tick = (cpu_div == 2'd0);
+
 wire cpu_run_en;
-assign cpu_run_en = cpu_step
+assign cpu_run_en = cpu_tick
+                  & cpu_step
                   & ~inst_dbg_en
                   & ~dmem_dbg_en
                   & ~testcase_update_busy;
