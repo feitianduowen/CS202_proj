@@ -168,7 +168,7 @@ end
 wire cpu_run_en;
 assign cpu_run_en = cpu_step
                   & ~inst_dbg_en
-                  & ~dbg_dmem_write
+                  & ~dmem_dbg_en
                   & ~testcase_update_busy;
 
    CPU u_cpu (

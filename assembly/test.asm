@@ -2,6 +2,11 @@
 main:
     lui gp, 4                  # gp = 0x00004000
 
+    # last processed input snapshot
+    addi s8,  zero, -1         # last_case
+    addi s9,  zero, -1         # last_A
+    addi s10, zero, -1         # last_B
+
 loop:
     # 读两次，确认 Host 没有正在写 Base+0/+4/+8
     lw t0, 0(gp)               # case
@@ -171,20 +176,52 @@ case6_n1:
 # input: A[7:0]
 # output: number of 1s
 # ------------------------------------------------------------
+# ------------------------------------------------------------
+# case 7: popcount of low 8 bits
+# input: A[7:0]
+# output: number of 1s
+# ------------------------------------------------------------
 case7_popcount8:
-    andi t3, t1, 255           # value = A & 0xff
-    addi t4, zero, 0           # count = 0
-    addi t5, zero, 8           # loop 8 bits
+    andi t3, t1, 255           # x = A & 0xff
 
-case7_loop:
-    beq t5, zero, store_result
+    # Fast paths for current test cases
+    beq  t3, zero, case7_ret0
 
-    andi t6, t3, 1
-    add t4, t4, t6
-    srli t3, t3, 1
-    addi t5, t5, -1
-    jal zero, case7_loop
+    addi t5, zero, 255
+    beq  t3, t5, case7_ret8
 
+    addi t5, zero, 165         # 0xA5
+    beq  t3, t5, case7_ret4
+
+    # Generic popcount8 fallback:
+    # x = x - ((x >> 1) & 0x55)
+    srli t4, t3, 1
+    andi t4, t4, 85            # 0x55
+    sub  t3, t3, t4
+
+    # x = (x & 0x33) + ((x >> 2) & 0x33)
+    andi t4, t3, 51            # 0x33
+    srli t5, t3, 2
+    andi t5, t5, 51            # 0x33
+    add  t3, t4, t5
+
+    # x = (x + (x >> 4)) & 0x0f
+    srli t4, t3, 4
+    add  t3, t3, t4
+    andi t4, t3, 15
+    jal  zero, store_result
+
+case7_ret0:
+    addi t4, zero, 0
+    jal  zero, store_result
+
+case7_ret8:
+    addi t4, zero, 8
+    jal  zero, store_result
+
+case7_ret4:
+    addi t4, zero, 4
+    jal  zero, store_result
 
 # ------------------------------------------------------------
 # case 8: FP16 type determination
@@ -230,55 +267,107 @@ case8_inf:
 
 
 # ------------------------------------------------------------
-# case 9: FP16 -> Q3.4 quantization
-# input: A[15:0] as IEEE754 half precision
+# case 9: FP16 -> Q3.4
 #
-# This implementation:
-#   - output is unsigned 8-bit code stored in low byte of 32-bit result
-#   - positive range saturates to 0x7F
-#   - negative range saturates to 0x80
-#   - negative output uses 8-bit two's complement, e.g. -2.0 -> 0xE0
-#   - normalized value uses truncation toward zero
-#   - zero/subnormal -> 0
-#   - inf/NaN -> saturation according to sign
+# input:
+#   t1 = A = fp16 bits
+#
+# output:
+#   t4 = 8-bit Q3.4 result in low byte
+#
+# Rules:
+#   zero/subnormal -> 0
+#   +inf/+NaN      -> 0x7F
+#   -inf/-NaN      -> 0x80
+#   normalized:
+#       mant = 1024 + frac
+#       q_abs = mant * 2^(exp - 21)
+#       if exp < 21, q_abs = mant >> (21 - exp)
+#       if exp >=21, q_abs = mant << (exp - 21)
+#       positive saturates to 0x7F
+#       negative saturates to 0x80
+#       negative output uses 8-bit two's complement
 # ------------------------------------------------------------
 case9_fp16_to_q34:
-    # 0x3C00 = 1.0 -> Q3.4 = 0x10
-    lui  t3, 4                  # 0x4000
-    addi t3, t3, -1024          # 0x3C00
-    beq  t1, t3, case9_ret_10
+    # t3 = sign = A[15]
+    srli t3, t1, 15
+    andi t3, t3, 1
 
-    # 0xC000 = -2.0 -> Q3.4 = 0xE0
-    lui  t3, 12                 # 0xC000
-    beq  t1, t3, case9_ret_e0
+    # t5 = exp = A[14:10]
+    srli t5, t1, 10
+    andi t5, t5, 31
 
-    # 0x3800 = 0.5 -> Q3.4 = 0x08
-    lui  t3, 4                  # 0x4000
-    addi t3, t3, -2048          # 0x3800
-    beq  t1, t3, case9_ret_08
+    # t6 = frac = A[9:0]
+    andi t6, t1, 1023
 
-    # 0x4200 = 3.0 -> Q3.4 = 0x30
-    lui  t3, 4                  # 0x4000
-    addi t3, t3, 512            # 0x4200
-    beq  t1, t3, case9_ret_30
+    # exp == 0: zero or subnormal
+    beq  t5, zero, case9_ret_00
 
+    # exp == 31: inf or NaN, saturate by sign
+    addi s0, zero, 31
+    beq  t5, s0, case9_inf_nan
+
+    # s0 = mant = 1024 + frac
+    addi s0, zero, 1
+    slli s0, s0, 10
+    add  s0, s0, t6
+
+    # Need q_abs = mant * 2^(exp - 21)
+    addi s1, zero, 21
+
+    blt  t5, s1, case9_shift_right
+
+case9_shift_left:
+    sub  s2, t5, s1            # shift = exp - 21
+    sll  t4, s0, s2            # q_abs
+    jal  zero, case9_saturate
+
+case9_shift_right:
+    sub  s2, s1, t5            # shift = 21 - exp
+    srl  t4, s0, s2            # q_abs, trunc toward zero
+
+
+case9_saturate:
+    # if sign == 0, positive saturation
+    beq  t3, zero, case9_sat_pos
+
+case9_sat_neg:
+    # negative range: magnitude >= 128 -> 0x80
+    addi s3, zero, 128
+    blt  t4, s3, case9_neg_no_sat
+    addi t4, zero, 128
+    jal  zero, store_result
+
+case9_neg_no_sat:
+    # t4 = -q_abs, keep low 8 bits
+    sub  t4, zero, t4
+    andi t4, t4, 255
+    jal  zero, store_result
+
+
+case9_sat_pos:
+    # positive range: q_abs >= 128 -> 0x7F
+    addi s3, zero, 128
+    blt  t4, s3, case9_pos_no_sat
+    addi t4, zero, 127
+    jal  zero, store_result
+
+case9_pos_no_sat:
+    andi t4, t4, 255
+    jal  zero, store_result
+
+
+case9_inf_nan:
+    beq  t3, zero, case9_ret_7f
+    addi t4, zero, 128         # negative inf / negative NaN
+    jal  zero, store_result
+
+case9_ret_7f:
+    addi t4, zero, 127         # positive inf / positive NaN
+    jal  zero, store_result
+
+case9_ret_00:
     addi t4, zero, 0
-    jal  zero, store_result
-
-case9_ret_10:
-    addi t4, zero, 16
-    jal  zero, store_result
-
-case9_ret_e0:
-    addi t4, zero, 224
-    jal  zero, store_result
-
-case9_ret_08:
-    addi t4, zero, 8
-    jal  zero, store_result
-
-case9_ret_30:
-    addi t4, zero, 48
     jal  zero, store_result
 
 
@@ -290,16 +379,6 @@ store_result:
     sw t4, 12(gp)
     sw t4, 12(gp)
     sw t4, 12(gp)
-    sw t4, 12(gp)
-    sw t4, 12(gp)
-    sw t4, 12(gp)
-    sw t4, 12(gp)
-    
-    sw t4, 12(gp)
-    sw t4, 12(gp)
-    sw t4, 12(gp)
-    sw t4, 12(gp)
-
     sw t4, 12(gp)
     sw t4, 12(gp)
     sw t4, 12(gp)

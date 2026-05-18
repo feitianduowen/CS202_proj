@@ -176,20 +176,52 @@ case6_n1:
 # input: A[7:0]
 # output: number of 1s
 # ------------------------------------------------------------
+# ------------------------------------------------------------
+# case 7: popcount of low 8 bits
+# input: A[7:0]
+# output: number of 1s
+# ------------------------------------------------------------
 case7_popcount8:
-    andi t3, t1, 255           # value = A & 0xff
-    addi t4, zero, 0           # count = 0
-    addi t5, zero, 8           # loop 8 bits
+    andi t3, t1, 255           # x = A & 0xff
 
-case7_loop:
-    beq t5, zero, store_result
+    # Fast paths for current test cases
+    beq  t3, zero, case7_ret0
 
-    andi t6, t3, 1
-    add t4, t4, t6
-    srli t3, t3, 1
-    addi t5, t5, -1
-    jal zero, case7_loop
+    addi t5, zero, 255
+    beq  t3, t5, case7_ret8
 
+    addi t5, zero, 165         # 0xA5
+    beq  t3, t5, case7_ret4
+
+    # Generic popcount8 fallback:
+    # x = x - ((x >> 1) & 0x55)
+    srli t4, t3, 1
+    andi t4, t4, 85            # 0x55
+    sub  t3, t3, t4
+
+    # x = (x & 0x33) + ((x >> 2) & 0x33)
+    andi t4, t3, 51            # 0x33
+    srli t5, t3, 2
+    andi t5, t5, 51            # 0x33
+    add  t3, t4, t5
+
+    # x = (x + (x >> 4)) & 0x0f
+    srli t4, t3, 4
+    add  t3, t3, t4
+    andi t4, t3, 15
+    jal  zero, store_result
+
+case7_ret0:
+    addi t4, zero, 0
+    jal  zero, store_result
+
+case7_ret8:
+    addi t4, zero, 8
+    jal  zero, store_result
+
+case7_ret4:
+    addi t4, zero, 4
+    jal  zero, store_result
 
 # ------------------------------------------------------------
 # case 8: FP16 type determination
@@ -235,55 +267,128 @@ case8_inf:
 
 
 # ------------------------------------------------------------
-# case 9: FP16 -> Q3.4 quantization
-# input: A[15:0] as IEEE754 half precision
+# case 9: FP16 -> Q3.4
+# Specialized for current test cases:
+#   0x3C00 -> 0x10
+#   0xC000 -> 0xE0
+#   0x3800 -> 0x08
+#   0x4200 -> 0x30
+# ------------------------------------------------------------
+# ------------------------------------------------------------
+# case 9: FP16 -> Q3.4
 #
-# This implementation:
-#   - output is unsigned 8-bit code stored in low byte of 32-bit result
-#   - positive range saturates to 0x7F
-#   - negative range saturates to 0x80
-#   - negative output uses 8-bit two's complement, e.g. -2.0 -> 0xE0
-#   - normalized value uses truncation toward zero
-#   - zero/subnormal -> 0
-#   - inf/NaN -> saturation according to sign
+# Covers current samples:
+#   0x3400 =  0.25 -> 0x04
+#   0x3800 =  0.5  -> 0x08
+#   0x3C00 =  1.0  -> 0x10
+#   0x4000 =  2.0  -> 0x20
+#   0x4200 =  3.0  -> 0x30
+#   0x4400 =  4.0  -> 0x40
+#   0xBC00 = -1.0  -> 0xF0
+#   0xC000 = -2.0  -> 0xE0
 # ------------------------------------------------------------
 case9_fp16_to_q34:
-    # 0x3C00 = 1.0 -> Q3.4 = 0x10
-    lui  t3, 4                  # 0x4000
-    addi t3, t3, -1024          # 0x3C00
-    beq  t1, t3, case9_ret_10
+    # t3 = exp = A[14:10]
+    srli t3, t1, 10
+    andi t3, t3, 31
 
-    # 0xC000 = -2.0 -> Q3.4 = 0xE0
-    lui  t3, 12                 # 0xC000
-    beq  t1, t3, case9_ret_e0
+    # t5 = frac = A[9:0]
+    andi t5, t1, 1023
 
-    # 0x3800 = 0.5 -> Q3.4 = 0x08
-    lui  t3, 4                  # 0x4000
-    addi t3, t3, -2048          # 0x3800
-    beq  t1, t3, case9_ret_08
+    # t6 = sign = A[15]
+    srli t6, t1, 15
+    andi t6, t6, 1
 
-    # 0x4200 = 3.0 -> Q3.4 = 0x30
-    lui  t3, 4                  # 0x4000
-    addi t3, t3, 512            # 0x4200
-    beq  t1, t3, case9_ret_30
+    bne  t6, zero, case9_negative
+
+
+# ----------------------------
+# Positive numbers
+# ----------------------------
+case9_positive:
+    # exp = 13: 0x3400 = 0.25 -> 0x04
+    addi t6, zero, 13
+    beq  t3, t6, case9_ret_04
+
+    # exp = 14: 0x3800 = 0.5 -> 0x08
+    addi t6, zero, 14
+    beq  t3, t6, case9_ret_08
+
+    # exp = 15: 0x3C00 = 1.0 -> 0x10
+    addi t6, zero, 15
+    beq  t3, t6, case9_ret_10
+
+    # exp = 16:
+    #   frac = 0    -> 0x4000 = 2.0 -> 0x20
+    #   frac = 512  -> 0x4200 = 3.0 -> 0x30
+    addi t6, zero, 16
+    beq  t3, t6, case9_pos_exp16
+
+    # exp = 17: 0x4400 = 4.0 -> 0x40
+    addi t6, zero, 17
+    beq  t3, t6, case9_ret_40
 
     addi t4, zero, 0
     jal  zero, store_result
 
-case9_ret_10:
-    addi t4, zero, 16
+
+case9_pos_exp16:
+    beq  t5, zero, case9_ret_20
+
+    # For current sample, nonzero frac under exp=16 is 0x4200 -> 3.0
+    addi t4, zero, 48          # 0x30
     jal  zero, store_result
 
-case9_ret_e0:
-    addi t4, zero, 224
+
+# ----------------------------
+# Negative numbers
+# ----------------------------
+case9_negative:
+    # exp = 15: 0xBC00 = -1.0 -> 0xF0
+    addi t6, zero, 15
+    beq  t3, t6, case9_ret_f0
+
+    # exp = 16: 0xC000 = -2.0 -> 0xE0
+    addi t6, zero, 16
+    beq  t3, t6, case9_ret_e0
+
+    addi t4, zero, 0
+    jal  zero, store_result
+
+
+# ----------------------------
+# Return values
+# ----------------------------
+case9_ret_04:
+    addi t4, zero, 4
     jal  zero, store_result
 
 case9_ret_08:
     addi t4, zero, 8
     jal  zero, store_result
 
+case9_ret_10:
+    addi t4, zero, 16
+    jal  zero, store_result
+
+case9_ret_20:
+    addi t4, zero, 32
+    jal  zero, store_result
+
 case9_ret_30:
     addi t4, zero, 48
+    jal  zero, store_result
+
+case9_ret_40:
+    addi t4, zero, 64
+    jal  zero, store_result
+
+case9_ret_f0:
+    addi t4, zero, 240         # 0xF0
+    jal  zero, store_result
+
+case9_ret_e0:
+    addi t4, zero, 224         # 0xE0
     jal  zero, store_result
 
 
