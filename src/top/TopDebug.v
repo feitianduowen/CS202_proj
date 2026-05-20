@@ -20,6 +20,30 @@ module TopDebug  #(
    output wire [7:0] tube_signal_right
 );
 
+    reg [1:0] clk_div_cnt;
+
+    always @(posedge clk_100 or negedge rst_n) begin
+        if (!rst_n)
+            clk_div_cnt <= 2'b00;
+        else
+            clk_div_cnt <= clk_div_cnt + 2'b01;
+    end
+
+    wire clk_cpu_raw = clk_div_cnt[1];
+
+    wire clk_cpu;
+    BUFG u_bufg_cpu (
+        .I(clk_cpu_raw),
+        .O(clk_cpu)
+    );
+
+    wire cpu_run_en;
+    assign cpu_run_en = cpu_step
+                    & ~inst_dbg_en
+                    & ~dmem_dbg_en
+                    & ~testcase_update_busy;
+
+
    // =========================
    // UART RX/TX
    // =========================
@@ -30,10 +54,10 @@ module TopDebug  #(
    wire tx_busy;
 
    UartRx #(
-      .CLK_FREQ(100_000_000),
+      .CLK_FREQ(25_000_000),
       .BAUD(115200)
    ) u_uart_rx (
-      .clk    (clk_100),
+      .clk    (clk_cpu),
       .rst_n   (rst_n),
       .rx_pin  (rx),
       .rx_data (rx_data),
@@ -41,10 +65,10 @@ module TopDebug  #(
    );
 
    UartTx #(
-      .CLK_FREQ(100_000_000),
+      .CLK_FREQ(25_000_000),
       .BAUD(115200)
    ) u_uart_tx (
-      .clk    (clk_100),
+      .clk    (clk_cpu),
       .rst_n   (rst_n),
       .tx_data (tx_data),
       .tx_start(tx_start),
@@ -76,7 +100,7 @@ module TopDebug  #(
    wire [31:0] dmem_rd_data;
 
    DebugController u_debug_ctrl (
-      .clk     (clk_100),
+      .clk     (clk_cpu),
       .rst_n   (rst_n),
 
       .rx_data  (rx_data),
@@ -148,7 +172,7 @@ assign write_op_b_addr = dbg_dmem_write & (dmem_dbg_addr == 32'h0000_4008);
 
 reg testcase_update_busy;
 
-always @(posedge clk_100 or negedge rst_n) begin
+always @(posedge clk_cpu or negedge rst_n) begin
     if (!rst_n) begin
         testcase_update_busy <= 1'b0;
     end else begin
@@ -165,28 +189,10 @@ always @(posedge clk_100 or negedge rst_n) begin
     end
 end
 
-reg [1:0] cpu_div;
 
-always @(posedge clk_100 or negedge rst_n) begin
-    if (!rst_n) begin
-        cpu_div <= 2'd0;
-    end else begin
-        cpu_div <= cpu_div + 2'd1;
-    end
-end
-
-wire cpu_tick;
-assign cpu_tick = (cpu_div == 2'd0);
-
-wire cpu_run_en;
-assign cpu_run_en = cpu_tick
-                  & cpu_step
-                  & ~inst_dbg_en
-                  & ~dmem_dbg_en
-                  & ~testcase_update_busy;
 
    CPU u_cpu (
-      .clk    (clk_100),
+      .clk    (clk_cpu),
       .rst_n   (cpu_rst_n),
 
       .run_en  (cpu_run_en),
@@ -214,7 +220,7 @@ assign cpu_run_en = cpu_tick
    InstRam #(
       .INIT_FILE("inst.mem")
    ) u_inst_ram (
-      .clk        (clk_100),
+      .clk        (clk_cpu),
       .rst_n      (cpu_rst_n),
 
       .addr       (imem_addr),
@@ -235,7 +241,7 @@ assign cpu_run_en = cpu_tick
    wire        ram_re;
 
    MMIO u_mmio (
-   .clk(clk_100),
+   .clk(clk_cpu),
    .rst_n(cpu_rst_n),
 
     // CPU memory bus
@@ -264,7 +270,7 @@ DatatRam #(
    .DATA_WIDTH(32),
    .INIT_FILE("data.mem")
 ) u_data_ram (
-   .clk(clk_100),
+   .clk(clk_cpu),
    .rst_n(cpu_rst_n),
 
    .we(ram_we),
@@ -283,7 +289,6 @@ DatatRam #(
    wire step_pulse;
    reg [31:0] display_data;
    wire [31:0] board_input;
-   
    assign board_input = {24'b0, switch};
 
 
@@ -307,7 +312,7 @@ always @(*) begin
     assign small_led = small_switch;
 
     SevenSeg u_seven_seg (
-        .clk(clk_100),
+        .clk(clk_cpu),
         .rst_n(cpu_rst_n),
         .data(display_data),
         .tube_scan(tube_scan),
@@ -318,7 +323,7 @@ always @(*) begin
    ButtonDebounce #(
         .DEBOUNCE_CYCLES(DEBOUNCE_CYCLES)
     ) u_step_debounce (
-        .clk(clk_100),
+        .clk(clk_cpu),
         .rst_n(cpu_rst_n),
         .btn_in(start_pg),
         .btn_posedge(step_pulse)
