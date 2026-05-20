@@ -7,13 +7,14 @@ module EX (
     input wire [3:0] alu_op,
     input wire alu_src,
     input wire [2:0] funct3,
+    input wire funct7_0,
 
     input wire branch,
     input wire jal,
     input wire jalr,
     input wire lui,
     input wire auipc,
-    input wire custom_en,
+    input wire vpu_en,
 
     output wire [31:0] ex_result,
     output wire [31:0] branch_target,
@@ -58,14 +59,17 @@ module EX (
         .target(branch_target)
     );
 
-    wire [31:0] custom_result;
+    wire [3:0] vp_op;
+    assign vp_op = {funct7_0, funct3};
+    wire [31:0] vpu_result;
     
-    Accelerator u_Accelerator(
-        .rs1_data(rs1_data),
-        .funct3(funct3),
-        .result(custom_result)
+    VPU u_VPU(
+        .a(rs1_data),
+        .b(rs2_data),
+        .vp_op(vp_op),
+        .result(vpu_result)
     );
     
-    assign ex_result = custom_en ? custom_result : alu_y;
+    assign ex_result = vpu_en ? vpu_result : alu_y;
 
 endmodule
