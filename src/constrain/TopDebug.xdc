@@ -1,5 +1,4 @@
 create_clock -period 10.000 -name clk_100 [get_ports clk_100]
-create_generated_clock -name clk_cpu \ -source [get_ports clk_100] \ -divide_by 4 \ [get_pins u_bufg_cpu/O]
 
 set_property PACKAGE_PIN G2 [get_ports {tube_scan[7]}]
 set_property PACKAGE_PIN C2 [get_ports {tube_scan[6]}]
