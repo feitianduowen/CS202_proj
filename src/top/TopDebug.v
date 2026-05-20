@@ -268,13 +268,13 @@ DatatRam #(
    .rst_n(cpu_rst_n),
 
    .we(ram_we),
-   .addr(ram_addr),
+   .addr(ram_addr[13:0]),
    .din(ram_wdata),
    .dout(ram_rdata),
    .byte(ram_wstrb),
 
    .we_b   (dmem_dbg_en & dmem_wr_en),
-   .addr_b (dmem_dbg_addr),
+   .addr_b (dmem_dbg_addr[13:0]),
    .dout_b (dmem_rd_data),
    .din_b  (dmem_wr_data),
    .byte_b (4'b1111)
