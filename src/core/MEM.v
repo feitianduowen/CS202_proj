@@ -70,7 +70,7 @@ module MEM (
                 end
 
                 3'b010: begin
-                    // SW
+                    // SW / FSW
                     dmem_wstrb = 4'b1111;
                     dmem_wdata = store_data;
                 end

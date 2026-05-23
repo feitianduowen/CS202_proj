@@ -10,6 +10,10 @@ module ImmGen (
                 imm = {{20{inst[31]}}, inst[31:20]};
             end
 
+            7'b0000111: begin // flw (I-type load)
+                imm = {{20{inst[31]}}, inst[31:20]};
+            end
+
             7'b0010011: begin
                 // I-type ALU
                 if (inst[14:12] == 3'b001 || inst[14:12] == 3'b101) begin
@@ -26,6 +30,10 @@ module ImmGen (
 
             7'b0100011: begin
                 // S-type
+                imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
+            end
+
+            7'b0100111: begin // fsw (S-type)
                 imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
             end
 

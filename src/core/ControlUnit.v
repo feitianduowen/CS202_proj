@@ -11,6 +11,10 @@ module ControlUnit (
     output reg mem_re,
     output reg alu_src,
 
+    output reg fp_we,
+    output reg fp_wb_sel,
+    output reg fp_sub,
+
     output reg branch,
     output reg jal,
     output reg jalr,
@@ -44,6 +48,10 @@ module ControlUnit (
         mem_we = 1'b0;
         mem_re = 1'b0;
         alu_src = 1'b0;
+
+        fp_we = 1'b0;
+        fp_wb_sel = 1'b0;
+        fp_sub = 1'b0;
 
         branch = 1'b0;
         jal = 1'b0;
@@ -158,6 +166,31 @@ module ControlUnit (
                 alu_src = 1'b0;
                 wb_sel = WB_ALU;
                 vpu_en = 1'b1;
+            end
+
+            7'b1010011: begin
+                // fadd.s/fsub.s
+                fp_we = 1'b1;
+                fp_wb_sel = 1'b0;
+                fp_sub = funct7[2];
+            end
+
+            7'b0000111: begin
+                // flw
+                fp_we = 1'b1;
+                reg_we = 1'b0;
+                mem_re = 1'b1;
+                fp_wb_sel = 1'b1;
+                alu_src = 1'b1;
+                alu_op = ALU_ADD;
+                wb_sel = WB_MEM;
+            end
+
+            7'b0100111: begin
+                // fsw
+                mem_we = 1'b1;
+                alu_src = 1'b1;
+                alu_op = ALU_ADD;
             end
 
             default: begin

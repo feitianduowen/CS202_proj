@@ -11,6 +11,16 @@ module ID (
     output wire [31:0] rs2_data,
     output wire [31:0] imm,
 
+    input wire fp_wb_we,
+    input wire [4:0] fp_wb_waddr,
+    input wire [31:0] fp_wb_wdata,
+
+    output wire [31:0] fp_rs1_data,
+    output wire [31:0] fp_rs2_data,
+    output wire fp_we,
+    output wire fp_wb_sel,
+    output wire fp_sub,
+
     output wire [4:0] rs1,
     output wire [4:0] rs2,
     output wire [4:0] rd,
@@ -22,7 +32,7 @@ module ID (
     output wire [3:0] alu_op,
     output wire [1:0] wb_sel,
 
-    input  wire [4:0]  dbg_reg_addr,
+    input  wire [5:0]  dbg_reg_addr,  // [5] 选择整数/浮点，[4:0] 寄存器编号
     output wire [31:0] dbg_reg_data,
 
     output wire reg_we,
@@ -36,6 +46,9 @@ module ID (
     output wire auipc,
     output wire vpu_en
 );
+
+    wire [31:0] int_dbg_data;
+    wire [31:0] fp_dbg_data;
 
     Decoder u_decoder (
         .inst(inst),
@@ -59,8 +72,26 @@ module ID (
         .rdata1(rs1_data),
         .rdata2(rs2_data),
         .dbg_reg_addr(dbg_reg_addr),
-        .dbg_reg_data(dbg_reg_data)
+        .dbg_reg_data(int_dbg_data)
     );
+
+    FRegFile u_freg_file (
+        .clk(clk),
+        .rst_n(rst_n),
+        .we(fp_wb_we),
+        .raddr1(rs1),
+        .raddr2(rs2),
+        .waddr(fp_wb_waddr),
+        .wdata(fp_wb_wdata),
+        .rdata1(fp_rs1_data),
+        .rdata2(fp_rs2_data),
+        .dbg_reg_addr(dbg_reg_addr),
+        .dbg_reg_data(fp_dbg_data)
+    );
+
+    // dbg_reg_addr[5] = 0 → 整数寄存器
+    // dbg_reg_addr[5] = 1 → 浮点寄存器
+    assign dbg_reg_data = dbg_reg_addr[5] ? fp_dbg_data : int_dbg_data;
 
     ControlUnit u_control_unit (
         .opcode(opcode),
@@ -72,6 +103,9 @@ module ID (
         .mem_we(mem_we),
         .mem_re(mem_re),
         .alu_src(alu_src),
+        .fp_we(fp_we),
+        .fp_wb_sel(fp_wb_sel),
+        .fp_sub(fp_sub),
         .branch(branch),
         .jal(jal),
         .jalr(jalr),

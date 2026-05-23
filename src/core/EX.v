@@ -4,6 +4,10 @@ module EX (
     input wire [31:0] rs2_data,
     input wire [31:0] imm,
 
+    input wire [31:0] fp_rs1_data,
+    input wire [31:0] fp_rs2_data,
+    input wire fp_sub,
+
     input wire [3:0] alu_op,
     input wire alu_src,
     input wire [2:0] funct3,
@@ -17,6 +21,7 @@ module EX (
     input wire vpu_en,
 
     output wire [31:0] ex_result,
+    output wire [31:0] fp_result,
     output wire [31:0] branch_target,
     output wire take_branch,
 
@@ -63,7 +68,7 @@ module EX (
     assign vp_op = {funct7_0, funct3};
     wire [31:0] vpu_result;
     
-    VPU u_VPU(
+    VPU u_VPU (
         .a(rs1_data),
         .b(rs2_data),
         .vp_op(vp_op),
@@ -71,5 +76,12 @@ module EX (
     );
     
     assign ex_result = vpu_en ? vpu_result : alu_y;
+
+    FPAdd u_fp_add (
+        .a(fp_rs1_data),
+        .b(fp_rs2_data),
+        .sub(fp_sub),
+        .result(fp_result)
+    );
 
 endmodule

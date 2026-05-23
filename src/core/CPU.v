@@ -19,7 +19,7 @@ module CPU (
     output wire dmem_we,
     output wire dmem_re,
 
-    input  wire [4:0]  dbg_reg_addr,
+    input  wire [5:0]  dbg_reg_addr,
     output wire [31:0] dbg_reg_data,
     output wire [31:0] dbg_pc
 
@@ -59,6 +59,7 @@ module CPU (
     wire vpu_en;
 
     wire reg_we_eff;
+    wire fp_we_eff;
     wire mem_we_eff;
     wire mem_re_eff;
 
@@ -72,6 +73,14 @@ module CPU (
 
     wire [31:0] load_data;
     wire [31:0] wb_data;
+
+    wire [31:0] fp_rs1_data;
+    wire [31:0] fp_rs2_data;
+    wire fp_we;
+    wire fp_sub;
+    wire fp_wb_sel;
+    wire [31:0] fp_result;
+    wire [31:0] fp_wb_data;
 
         // ============================================================
     // Load state machine for synchronous DataRam
@@ -153,10 +162,19 @@ module CPU (
 
     // load 第一拍/等待拍不写寄存器；只有 LD_WB 写回
     // 非 load 指令仍然单周期写回
+
+    wire is_fp_load = (opcode == 7'b0000111);
+
     assign reg_we_eff =
         cpu_en & (
             ((load_state == LD_IDLE) & reg_we_dec & ~is_load_inst) |
-            (load_state == LD_WB)
+            (load_state == LD_WB & ~is_fp_load)
+        );
+
+    assign fp_we_eff = 
+        cpu_en & (
+            ((load_state == LD_IDLE) & fp_we & ~is_load_inst) |
+            (load_state == LD_WB & is_fp_load)
         );
 
     // store 只在空闲状态执行，避免 load stall 期间重复写
@@ -208,6 +226,15 @@ module CPU (
         .rs2_data(rs2_data),
         .imm(imm),
 
+        .fp_wb_we(fp_we_eff),
+        .fp_wb_waddr(wb_waddr_eff),
+        .fp_wb_wdata(fp_wb_data),
+        .fp_rs1_data(fp_rs1_data),
+        .fp_rs2_data(fp_rs2_data),
+        .fp_we(fp_we),
+        .fp_wb_sel(fp_wb_sel),
+        .fp_sub(fp_sub),
+
         .rs1(rs1),
         .rs2(rs2),
         .rd(rd),
@@ -247,6 +274,11 @@ module CPU (
         .auipc(auipc),
         .vpu_en(vpu_en),
 
+        .fp_rs1_data(fp_rs1_data),
+        .fp_rs2_data(fp_rs2_data),
+        .fp_sub(fp_sub),
+        .fp_result(fp_result),
+
         .ex_result(alu_y),
         .branch_target(branch_target),
         .take_branch(take_branch),
@@ -255,12 +287,15 @@ module CPU (
         .ltu(ltu)
     );
 
+    wire is_fp_store = mem_we_dec & (opcode == 7'b0100111); // fsw
+    wire [31:0] mem_store_data = is_fp_store ? fp_rs2_data : rs2_data;
+
     MEM u_mem (
     .mem_we(mem_we_eff),
     .mem_re(mem_re_eff),
     .funct3(mem_funct3_eff),
     .addr(mem_addr_eff),
-    .store_data(rs2_data),
+    .store_data(mem_store_data),
 
     .dmem_rdata(dmem_rdata),
     .dmem_addr(dmem_addr),
@@ -276,12 +311,16 @@ module CPU (
     .mem_rdata(load_data),
     .pc4(pc4),
     .wb_sel(wb_sel_eff),
-    .wb_data(wb_data)
+    .wb_data(wb_data),
+
+    .fp_result(fp_result),
+    .fp_wb_sel(fp_wb_sel),
+    .fp_we(fp_we),
+    .fp_wb_data(fp_wb_data)
     );
 
     assign pc_dbg = pc;
     assign wb_dbg = wb_data;
     assign reg_dbg = rs1_data;
-
 
 endmodule

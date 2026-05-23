@@ -22,7 +22,7 @@ module DebugController (
     output reg         cpu_reset,
 
     // Debug: register read
-    output reg  [4:0]  dbg_reg_addr,
+    output reg  [5:0]  dbg_reg_addr,
     input [31:0] dbg_reg_data,
 
     // Debug: instruction memory
@@ -234,7 +234,7 @@ module DebugController (
                         end
 
                         CMD_READ_REG: begin
-                            dbg_reg_addr <= payload[0][4:0];
+                            dbg_reg_addr <= payload[0][5:0];
                             // Register is combinational read, but still need to wait for cross-clock domain stability
                             mem_wait_cnt <= MEM_WAIT_CYCLES;
                             state        <= S_MEM_WAIT;
