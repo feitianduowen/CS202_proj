@@ -313,7 +313,7 @@ always @(*) begin
     assign small_led = small_switch;
 
     SevenSeg u_seven_seg (
-        .clk(clk_cpu),
+        .clk(clk_100),
         .rst_n(cpu_rst_n),
         .data(display_data),
         .tube_scan(tube_scan),
