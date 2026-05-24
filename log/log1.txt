@@ -14,36 +14,38 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 34052 
+INFO: Helper process launched with PID 22028 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 334.766 ; gain = 104.246
+Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:03 . Memory (MB): peak = 335.125 ; gain = 105.141
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-638] synthesizing module 'TopDebug' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/top/TopDebug.v:1]
+INFO: [Synth 8-638] synthesizing module 'TopDebug' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/top/TopDebug.v:1]
 	Parameter INST_INIT_FILE bound to: inst.mem - type: string 
 	Parameter DATA_INIT_FILE bound to: data.mem - type: string 
 	Parameter DEBOUNCE_CYCLES bound to: 1000000 - type: integer 
-INFO: [Synth 8-638] synthesizing module 'UartRx' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartRx.v:8]
-	Parameter CLK_FREQ bound to: 100000000 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'BUFG' [D:/Xilinx/Vivado/2017.4/scripts/rt/data/unisim_comp.v:607]
+INFO: [Synth 8-256] done synthesizing module 'BUFG' (1#1) [D:/Xilinx/Vivado/2017.4/scripts/rt/data/unisim_comp.v:607]
+INFO: [Synth 8-638] synthesizing module 'UartRx' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartRx.v:8]
+	Parameter CLK_FREQ bound to: 25000000 - type: integer 
 	Parameter BAUD bound to: 115200 - type: integer 
-	Parameter CLKS_PER_BIT bound to: 868 - type: integer 
-	Parameter HALF_BIT bound to: 434 - type: integer 
+	Parameter CLKS_PER_BIT bound to: 217 - type: integer 
+	Parameter HALF_BIT bound to: 108 - type: integer 
 	Parameter S_IDLE bound to: 2'b00 
 	Parameter S_START bound to: 2'b01 
 	Parameter S_DATA bound to: 2'b10 
 	Parameter S_STOP bound to: 2'b11 
-INFO: [Synth 8-226] default block is never used [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartRx.v:55]
-INFO: [Synth 8-256] done synthesizing module 'UartRx' (1#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartRx.v:8]
-INFO: [Synth 8-638] synthesizing module 'UartTx' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartTx.v:8]
-	Parameter CLK_FREQ bound to: 100000000 - type: integer 
+INFO: [Synth 8-226] default block is never used [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartRx.v:55]
+INFO: [Synth 8-256] done synthesizing module 'UartRx' (2#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartRx.v:8]
+INFO: [Synth 8-638] synthesizing module 'UartTx' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartTx.v:8]
+	Parameter CLK_FREQ bound to: 25000000 - type: integer 
 	Parameter BAUD bound to: 115200 - type: integer 
-	Parameter CLKS_PER_BIT bound to: 868 - type: integer 
+	Parameter CLKS_PER_BIT bound to: 217 - type: integer 
 	Parameter S_IDLE bound to: 2'b00 
 	Parameter S_START bound to: 2'b01 
 	Parameter S_DATA bound to: 2'b10 
 	Parameter S_STOP bound to: 2'b11 
-INFO: [Synth 8-226] default block is never used [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartTx.v:41]
-INFO: [Synth 8-256] done synthesizing module 'UartTx' (2#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartTx.v:8]
-INFO: [Synth 8-638] synthesizing module 'DebugController' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:8]
+INFO: [Synth 8-226] default block is never used [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartTx.v:41]
+INFO: [Synth 8-256] done synthesizing module 'UartTx' (3#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/UartTx.v:8]
+INFO: [Synth 8-638] synthesizing module 'DebugController' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:8]
 	Parameter CMD_PING bound to: 8'b00000000 
 	Parameter CMD_RESET bound to: 8'b00000001 
 	Parameter CMD_RUN bound to: 8'b00000010 
@@ -67,37 +69,40 @@ INFO: [Synth 8-638] synthesizing module 'DebugController' [D:/comp sci/CS202 Com
 	Parameter S_MEM_WAIT bound to: 4'b0101 
 	Parameter MEM_WAIT_CYCLES bound to: 5'b10100 
 	Parameter STEP_COUNTDOWN_INIT bound to: 4'b0100 
-WARNING: [Synth 8-5788] Register payload_reg[0] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[1] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[2] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[3] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[4] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[5] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[6] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register payload_reg[7] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
-WARNING: [Synth 8-5788] Register resp_buf_reg[0] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
-WARNING: [Synth 8-5788] Register resp_buf_reg[1] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
-WARNING: [Synth 8-5788] Register resp_buf_reg[2] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
-WARNING: [Synth 8-5788] Register resp_buf_reg[3] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
-WARNING: [Synth 8-5788] Register resp_buf_reg[4] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
-INFO: [Synth 8-256] done synthesizing module 'DebugController' (3#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:8]
-INFO: [Synth 8-638] synthesizing module 'CPU' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/CPU.v:1]
+WARNING: [Synth 8-5788] Register payload_reg[0] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[1] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[2] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[3] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[4] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[5] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[6] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register payload_reg[7] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:181]
+WARNING: [Synth 8-5788] Register resp_buf_reg[0] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
+WARNING: [Synth 8-5788] Register resp_buf_reg[1] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
+WARNING: [Synth 8-5788] Register resp_buf_reg[2] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
+WARNING: [Synth 8-5788] Register resp_buf_reg[3] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
+WARNING: [Synth 8-5788] Register resp_buf_reg[4] in module DebugController is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:193]
+INFO: [Synth 8-256] done synthesizing module 'DebugController' (4#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/debug_code/DebugController.v:8]
+INFO: [Synth 8-638] synthesizing module 'CPU' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/CPU.v:1]
 	Parameter WB_ALU bound to: 2'b00 
 	Parameter WB_MEM bound to: 2'b01 
 	Parameter WB_PC4 bound to: 2'b10 
 	Parameter LD_IDLE bound to: 2'b00 
 	Parameter LD_WAITRAM bound to: 2'b01 
 	Parameter LD_WB bound to: 2'b10 
-INFO: [Synth 8-638] synthesizing module 'IF' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/IF.v:1]
-INFO: [Synth 8-256] done synthesizing module 'IF' (4#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/IF.v:1]
-INFO: [Synth 8-638] synthesizing module 'ID' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ID.v:1]
-INFO: [Synth 8-638] synthesizing module 'Decoder' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/Decoder.v:1]
-INFO: [Synth 8-638] synthesizing module 'ImmGen' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ImmGen.v:1]
-INFO: [Synth 8-256] done synthesizing module 'ImmGen' (5#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ImmGen.v:1]
-INFO: [Synth 8-256] done synthesizing module 'Decoder' (6#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/Decoder.v:1]
-INFO: [Synth 8-638] synthesizing module 'RegFile' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/RegFile.v:1]
-INFO: [Synth 8-256] done synthesizing module 'RegFile' (7#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/RegFile.v:1]
-INFO: [Synth 8-638] synthesizing module 'ControlUnit' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:1]
+INFO: [Synth 8-155] case statement is not full and has no default [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/CPU.v:174]
+INFO: [Synth 8-638] synthesizing module 'IF' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/IF.v:1]
+INFO: [Synth 8-256] done synthesizing module 'IF' (5#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/IF.v:1]
+INFO: [Synth 8-638] synthesizing module 'ID' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ID.v:1]
+INFO: [Synth 8-638] synthesizing module 'Decoder' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/Decoder.v:1]
+INFO: [Synth 8-638] synthesizing module 'ImmGen' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ImmGen.v:1]
+INFO: [Synth 8-256] done synthesizing module 'ImmGen' (6#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ImmGen.v:1]
+INFO: [Synth 8-256] done synthesizing module 'Decoder' (7#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/Decoder.v:1]
+INFO: [Synth 8-638] synthesizing module 'RegFile' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/RegFile.v:1]
+INFO: [Synth 8-256] done synthesizing module 'RegFile' (8#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/RegFile.v:1]
+INFO: [Synth 8-638] synthesizing module 'FRegFile' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/FRegFile.v:1]
+INFO: [Synth 8-256] done synthesizing module 'FRegFile' (9#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/FRegFile.v:1]
+INFO: [Synth 8-638] synthesizing module 'ControlUnit' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:1]
 	Parameter WB_ALU bound to: 2'b00 
 	Parameter WB_MEM bound to: 2'b01 
 	Parameter WB_PC4 bound to: 2'b10 
@@ -113,12 +118,12 @@ INFO: [Synth 8-638] synthesizing module 'ControlUnit' [D:/comp sci/CS202 Compute
 	Parameter ALU_SLL bound to: 4'b1100 
 	Parameter ALU_SRL bound to: 4'b1101 
 	Parameter ALU_SRA bound to: 4'b1110 
-INFO: [Synth 8-226] default block is never used [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:62]
-INFO: [Synth 8-226] default block is never used [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:81]
-INFO: [Synth 8-256] done synthesizing module 'ControlUnit' (8#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:1]
-INFO: [Synth 8-256] done synthesizing module 'ID' (9#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ID.v:1]
-INFO: [Synth 8-638] synthesizing module 'EX' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/EX.v:1]
-INFO: [Synth 8-638] synthesizing module 'ALU' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ALU.v:1]
+INFO: [Synth 8-226] default block is never used [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:70]
+INFO: [Synth 8-226] default block is never used [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:89]
+INFO: [Synth 8-256] done synthesizing module 'ControlUnit' (10#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ControlUnit.v:1]
+INFO: [Synth 8-256] done synthesizing module 'ID' (11#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ID.v:1]
+INFO: [Synth 8-638] synthesizing module 'EX' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/EX.v:1]
+INFO: [Synth 8-638] synthesizing module 'ALU' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ALU.v:1]
 	Parameter ALU_ADD bound to: 4'b0000 
 	Parameter ALU_SUB bound to: 4'b0001 
 	Parameter ALU_AND bound to: 4'b0100 
@@ -131,10 +136,10 @@ INFO: [Synth 8-638] synthesizing module 'ALU' [D:/comp sci/CS202 Computer Organi
 	Parameter ALU_SLL bound to: 4'b1100 
 	Parameter ALU_SRL bound to: 4'b1101 
 	Parameter ALU_SRA bound to: 4'b1110 
-INFO: [Synth 8-256] done synthesizing module 'ALU' (10#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ALU.v:1]
-INFO: [Synth 8-638] synthesizing module 'BranchUnit' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/BranchUnit.v:1]
-INFO: [Synth 8-256] done synthesizing module 'BranchUnit' (11#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/BranchUnit.v:1]
-INFO: [Synth 8-638] synthesizing module 'VPU' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:1]
+INFO: [Synth 8-256] done synthesizing module 'ALU' (12#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/ALU.v:1]
+INFO: [Synth 8-638] synthesizing module 'BranchUnit' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/BranchUnit.v:1]
+INFO: [Synth 8-256] done synthesizing module 'BranchUnit' (13#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/BranchUnit.v:1]
+INFO: [Synth 8-638] synthesizing module 'VPU' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:1]
 	Parameter VPU_NOT bound to: 4'b0000 
 	Parameter VPU_NEG bound to: 4'b0001 
 	Parameter VPU_ABS bound to: 4'b0010 
@@ -147,45 +152,47 @@ INFO: [Synth 8-638] synthesizing module 'VPU' [D:/comp sci/CS202 Computer Organi
 	Parameter VPU_SRL bound to: 4'b1001 
 	Parameter VPU_MIN bound to: 4'b1010 
 	Parameter VPU_MAX bound to: 4'b1011 
-INFO: [Synth 8-256] done synthesizing module 'VPU' (12#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:1]
-INFO: [Synth 8-256] done synthesizing module 'EX' (13#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/EX.v:1]
-INFO: [Synth 8-638] synthesizing module 'MEM' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/MEM.v:1]
-INFO: [Synth 8-256] done synthesizing module 'MEM' (14#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/MEM.v:1]
-INFO: [Synth 8-638] synthesizing module 'WB' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/WB.v:1]
-INFO: [Synth 8-256] done synthesizing module 'WB' (15#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/WB.v:1]
-INFO: [Synth 8-256] done synthesizing module 'CPU' (16#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/CPU.v:1]
-INFO: [Synth 8-638] synthesizing module 'InstRam' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:1]
+INFO: [Synth 8-256] done synthesizing module 'VPU' (14#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:1]
+INFO: [Synth 8-638] synthesizing module 'FPAdd' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/FPAdd.v:1]
+INFO: [Synth 8-256] done synthesizing module 'FPAdd' (15#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/FPAdd.v:1]
+INFO: [Synth 8-256] done synthesizing module 'EX' (16#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/EX.v:1]
+INFO: [Synth 8-638] synthesizing module 'MEM' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/MEM.v:1]
+INFO: [Synth 8-256] done synthesizing module 'MEM' (17#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/MEM.v:1]
+INFO: [Synth 8-638] synthesizing module 'WB' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/WB.v:1]
+INFO: [Synth 8-256] done synthesizing module 'WB' (18#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/WB.v:1]
+INFO: [Synth 8-256] done synthesizing module 'CPU' (19#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/CPU.v:1]
+INFO: [Synth 8-638] synthesizing module 'InstRam' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:1]
 	Parameter ADDR_WIDTH bound to: 14 - type: integer 
 	Parameter DATA_WIDTH bound to: 32 - type: integer 
 	Parameter INIT_FILE bound to: inst.mem - type: string 
 	Parameter WORD_ADDR_WIDTH bound to: 12 - type: integer 
 	Parameter WORD_DEPTH bound to: 4096 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* ram_style = "distributed" *) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:27]
-INFO: [Synth 8-3876] $readmem data file 'inst.mem' is read successfully [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:41]
-INFO: [Synth 8-256] done synthesizing module 'InstRam' (17#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:1]
-INFO: [Synth 8-638] synthesizing module 'MMIO' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/MMIO.v:1]
+INFO: [Synth 8-5534] Detected attribute (* ram_style = "distributed" *) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:27]
+INFO: [Synth 8-3876] $readmem data file 'inst.mem' is read successfully [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:41]
+INFO: [Synth 8-256] done synthesizing module 'InstRam' (20#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/InstRam.v:1]
+INFO: [Synth 8-638] synthesizing module 'MMIO' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/MMIO.v:1]
 	Parameter MMIO_SWITCH_ADDR bound to: -65536 - type: integer 
 	Parameter MMIO_LED_ADDR bound to: -65528 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'MMIO' (18#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/MMIO.v:1]
-INFO: [Synth 8-638] synthesizing module 'DatatRam' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:1]
+INFO: [Synth 8-256] done synthesizing module 'MMIO' (21#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/MMIO.v:1]
+INFO: [Synth 8-638] synthesizing module 'DatatRam' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:1]
 	Parameter ADDR_WIDTH bound to: 14 - type: integer 
 	Parameter DATA_WIDTH bound to: 32 - type: integer 
 	Parameter INIT_FILE bound to: data.mem - type: string 
 	Parameter WORD_ADDR_WIDTH bound to: 12 - type: integer 
 	Parameter WORD_DEPTH bound to: 4096 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* ram_style = "block" *) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:27]
-INFO: [Synth 8-3876] $readmem data file 'data.mem' is read successfully [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:38]
-INFO: [Synth 8-256] done synthesizing module 'DatatRam' (19#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:1]
-INFO: [Synth 8-638] synthesizing module 'SevenSeg' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:1]
+INFO: [Synth 8-5534] Detected attribute (* ram_style = "block" *) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:27]
+INFO: [Synth 8-3876] $readmem data file 'data.mem' is read successfully [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:38]
+INFO: [Synth 8-256] done synthesizing module 'DatatRam' (22#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/mem/DataRam.v:1]
+INFO: [Synth 8-638] synthesizing module 'SevenSeg' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:1]
 	Parameter SCAN_ACTIVE_HIGH bound to: 1 - type: integer 
 	Parameter SEG_ACTIVE_HIGH bound to: 1 - type: integer 
-INFO: [Synth 8-226] default block is never used [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:40]
-INFO: [Synth 8-226] default block is never used [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:67]
-INFO: [Synth 8-256] done synthesizing module 'SevenSeg' (20#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:1]
-INFO: [Synth 8-638] synthesizing module 'ButtonDebounce' [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/other/ButtonDebounce.v:1]
+INFO: [Synth 8-226] default block is never used [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:40]
+INFO: [Synth 8-226] default block is never used [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:67]
+INFO: [Synth 8-256] done synthesizing module 'SevenSeg' (23#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:1]
+INFO: [Synth 8-638] synthesizing module 'ButtonDebounce' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/other/ButtonDebounce.v:1]
 	Parameter DEBOUNCE_CYCLES bound to: 1000000 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'ButtonDebounce' (21#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/other/ButtonDebounce.v:1]
-INFO: [Synth 8-256] done synthesizing module 'TopDebug' (22#1) [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/top/TopDebug.v:1]
+INFO: [Synth 8-256] done synthesizing module 'ButtonDebounce' (24#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/other/ButtonDebounce.v:1]
+INFO: [Synth 8-256] done synthesizing module 'TopDebug' (25#1) [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/top/TopDebug.v:1]
 WARNING: [Synth 8-3331] design DatatRam has unconnected port rst_n
 WARNING: [Synth 8-3331] design DatatRam has unconnected port addr[1]
 WARNING: [Synth 8-3331] design DatatRam has unconnected port addr[0]
@@ -229,7 +236,7 @@ WARNING: [Synth 8-3331] design InstRam has unconnected port inst_dbg_addr[16]
 WARNING: [Synth 8-3331] design InstRam has unconnected port inst_dbg_addr[15]
 WARNING: [Synth 8-3331] design InstRam has unconnected port inst_dbg_addr[14]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 404.121 ; gain = 173.602
+Finished RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 413.406 ; gain = 183.422
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -239,38 +246,38 @@ Report Check Netlist:
 |1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
 +------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 404.121 ; gain = 173.602
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 413.406 ; gain = 183.422
 ---------------------------------------------------------------------------------
 INFO: [Device 21-403] Loading part xc7a35tcsg324-1
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
-Parsing XDC File [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/constrain/TopDebug.xdc]
-Finished Parsing XDC File [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/constrain/TopDebug.xdc]
-INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/constrain/TopDebug.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/TopDebug_propImpl.xdc].
+Parsing XDC File [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/constrain/TopDebug.xdc]
+Finished Parsing XDC File [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/constrain/TopDebug.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/constrain/TopDebug.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/TopDebug_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/TopDebug_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 748.852 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 755.039 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 748.852 ; gain = 518.332
+Finished Constraint Validation : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 755.039 ; gain = 525.055
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcsg324-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 748.852 ; gain = 518.332
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 755.039 ; gain = 525.055
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 748.852 ; gain = 518.332
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 755.039 ; gain = 525.055
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5546] ROM "state" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
@@ -337,24 +344,54 @@ INFO: [Synth 8-5546] ROM "regs_reg[28]" won't be mapped to RAM because it is too
 INFO: [Synth 8-5546] ROM "regs_reg[29]" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "regs_reg[30]" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "regs_reg[31]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[0]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[1]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[2]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[3]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[4]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[5]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[6]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[7]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[8]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[9]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[10]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[11]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[12]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[13]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[14]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[15]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[16]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[17]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[18]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[19]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[20]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[21]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[22]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[23]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[24]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[25]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[26]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[27]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[28]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[29]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[30]" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "regs_reg[31]" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "alu_op0" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "alu_op0" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "wb_sel" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "fp_we" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5587] ROM size for "reg_we" is below threshold of ROM address width. It will be mapped to LUTs
-INFO: [Synth 8-5546] ROM "mem_we" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "mem_re" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5587] ROM size for "alu_src" is below threshold of ROM address width. It will be mapped to LUTs
 INFO: [Synth 8-5546] ROM "branch" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "jal" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "jalr" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "lui" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "auipc" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "vpu_en" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
-INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
-INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
-INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
-WARNING: [Synth 8-6014] Unused sequential element refresh_cnt_reg was removed.  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:21]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/core/VPU.v:34]
+INFO: [Synth 8-5544] ROM "mant_rounded2" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+WARNING: [Synth 8-6014] Unused sequential element refresh_cnt_reg was removed.  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:21]
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
@@ -367,7 +404,7 @@ WARNING: [Synth 8-6014] Unused sequential element refresh_cnt_reg was removed.  
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'DebugController'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 748.852 ; gain = 518.332
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 755.039 ; gain = 525.055
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -382,9 +419,13 @@ Detailed RTL Component Info :
 +---Adders : 
 	   2 Input     32 Bit       Adders := 6     
 	   3 Input     32 Bit       Adders := 1     
+	   2 Input     28 Bit       Adders := 1     
+	   2 Input     27 Bit       Adders := 1     
+	   3 Input     27 Bit       Adders := 1     
+	   2 Input     25 Bit       Adders := 1     
 	   2 Input     16 Bit       Adders := 2     
-	   2 Input      8 Bit       Adders := 4     
-	   3 Input      8 Bit       Adders := 4     
+	   2 Input      8 Bit       Adders := 18    
+	   3 Input      8 Bit       Adders := 17    
 	   2 Input      5 Bit       Adders := 2     
 	   2 Input      4 Bit       Adders := 3     
 	   2 Input      3 Bit       Adders := 3     
@@ -392,27 +433,31 @@ Detailed RTL Component Info :
 +---XORs : 
 	   2 Input     32 Bit         XORs := 1     
 	   2 Input      8 Bit         XORs := 4     
+	   2 Input      1 Bit         XORs := 1     
 +---Registers : 
-	               32 Bit    Registers := 41    
+	               32 Bit    Registers := 73    
 	               16 Bit    Registers := 2     
 	                8 Bit    Registers := 19    
-	                5 Bit    Registers := 3     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
 	                4 Bit    Registers := 3     
 	                3 Bit    Registers := 5     
 	                2 Bit    Registers := 4     
-	                1 Bit    Registers := 18    
+	                1 Bit    Registers := 19    
 +---RAMs : 
 	             128K Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input     32 Bit        Muxes := 28    
-	   8 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 32    
+	  10 Input     32 Bit        Muxes := 1     
 	  33 Input     32 Bit        Muxes := 3     
 	   4 Input     32 Bit        Muxes := 3     
+	   2 Input     27 Bit        Muxes := 28    
+	   2 Input     24 Bit        Muxes := 5     
 	   2 Input     16 Bit        Muxes := 4     
 	   4 Input     16 Bit        Muxes := 2     
 	   2 Input     14 Bit        Muxes := 1     
 	   4 Input      8 Bit        Muxes := 2     
-	   2 Input      8 Bit        Muxes := 24    
+	   2 Input      8 Bit        Muxes := 32    
 	  12 Input      8 Bit        Muxes := 1     
 	   5 Input      8 Bit        Muxes := 1     
 	   3 Input      8 Bit        Muxes := 4     
@@ -420,11 +465,12 @@ Detailed RTL Component Info :
 	  13 Input      8 Bit        Muxes := 4     
 	   6 Input      5 Bit        Muxes := 1     
 	   2 Input      5 Bit        Muxes := 1     
-	  12 Input      4 Bit        Muxes := 2     
+	  12 Input      4 Bit        Muxes := 1     
 	   2 Input      4 Bit        Muxes := 3     
 	   3 Input      4 Bit        Muxes := 1     
 	   6 Input      4 Bit        Muxes := 2     
 	   8 Input      4 Bit        Muxes := 3     
+	  15 Input      4 Bit        Muxes := 1     
 	   9 Input      4 Bit        Muxes := 1     
 	   4 Input      3 Bit        Muxes := 2     
 	  12 Input      3 Bit        Muxes := 1     
@@ -434,13 +480,16 @@ Detailed RTL Component Info :
 	  20 Input      3 Bit        Muxes := 1     
 	   5 Input      2 Bit        Muxes := 1     
 	   4 Input      2 Bit        Muxes := 2     
-	  12 Input      2 Bit        Muxes := 2     
+	  12 Input      2 Bit        Muxes := 1     
+	  15 Input      2 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 74    
+	   2 Input      1 Bit        Muxes := 109   
 	   4 Input      1 Bit        Muxes := 11    
 	   6 Input      1 Bit        Muxes := 33    
-	  12 Input      1 Bit        Muxes := 23    
+	  12 Input      1 Bit        Muxes := 13    
 	   5 Input      1 Bit        Muxes := 2     
+	  15 Input      1 Bit        Muxes := 13    
+	   3 Input      1 Bit        Muxes := 2     
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -506,7 +555,8 @@ Detailed RTL Component Info :
 +---Registers : 
 	               32 Bit    Registers := 4     
 	                8 Bit    Registers := 15    
-	                5 Bit    Registers := 2     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
 	                4 Bit    Registers := 3     
 	                3 Bit    Registers := 2     
 	                1 Bit    Registers := 8     
@@ -540,7 +590,7 @@ Module ImmGen
 Detailed RTL Component Info : 
 +---Muxes : 
 	   2 Input     32 Bit        Muxes := 1     
-	   8 Input     32 Bit        Muxes := 1     
+	  10 Input     32 Bit        Muxes := 1     
 Module RegFile 
 Detailed RTL Component Info : 
 +---Registers : 
@@ -548,15 +598,25 @@ Detailed RTL Component Info :
 +---Muxes : 
 	  33 Input     32 Bit        Muxes := 3     
 	   2 Input      1 Bit        Muxes := 32    
+Module FRegFile 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 32    
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 32    
 Module ControlUnit 
 Detailed RTL Component Info : 
 +---Muxes : 
 	   2 Input      4 Bit        Muxes := 1     
 	   8 Input      4 Bit        Muxes := 2     
-	  12 Input      4 Bit        Muxes := 1     
-	  12 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 1     
-	  12 Input      1 Bit        Muxes := 10    
+	  15 Input      4 Bit        Muxes := 1     
+	  15 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+	  15 Input      1 Bit        Muxes := 13    
+Module ID 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
 Module ALU 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -581,6 +641,22 @@ Detailed RTL Component Info :
 +---Muxes : 
 	   2 Input      8 Bit        Muxes := 12    
 	  13 Input      8 Bit        Muxes := 4     
+Module FPAdd 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     28 Bit       Adders := 1     
+	   2 Input     27 Bit       Adders := 1     
+	   3 Input     27 Bit       Adders := 1     
+	   2 Input     25 Bit       Adders := 1     
+	   3 Input      8 Bit       Adders := 13    
+	   2 Input      8 Bit       Adders := 14    
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Muxes : 
+	   2 Input     27 Bit        Muxes := 28    
+	   2 Input     24 Bit        Muxes := 5     
+	   2 Input      8 Bit        Muxes := 8     
+	   2 Input      1 Bit        Muxes := 2     
 Module EX 
 Detailed RTL Component Info : 
 +---Muxes : 
@@ -597,6 +673,7 @@ Module WB
 Detailed RTL Component Info : 
 +---Muxes : 
 	   4 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 2     
 Module CPU 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -606,12 +683,14 @@ Detailed RTL Component Info :
 	                5 Bit    Registers := 1     
 	                3 Bit    Registers := 1     
 	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
 +---Muxes : 
-	   2 Input     32 Bit        Muxes := 2     
+	   2 Input     32 Bit        Muxes := 3     
 	   2 Input      5 Bit        Muxes := 1     
 	   2 Input      3 Bit        Muxes := 1     
 	   4 Input      2 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
+	   3 Input      1 Bit        Muxes := 2     
 	   4 Input      1 Bit        Muxes := 1     
 Module InstRam 
 Detailed RTL Component Info : 
@@ -673,26 +752,10 @@ INFO: [Synth 8-5587] ROM size for "cpu_halt" is below threshold of ROM address w
 INFO: [Synth 8-5546] ROM "cpu_reset" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "dbg_reg_addr" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "inst_dbg_en" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "inst_wr_en" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "inst_wr_en" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "dmem_dbg_en" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "dmem_wr_en" won't be mapped to RAM because it is too sparse
+INFO: [Common 17-14] Message 'Synth 8-5546' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-5587] ROM size for "mem_wait_cnt" is below threshold of ROM address width. It will be mapped to LUTs
-INFO: [Synth 8-5546] ROM "p_0_out" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/alu_op0" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/alu_op0" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/wb_sel" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5587] ROM size for "u_control_unit/reg_we" is below threshold of ROM address width. It will be mapped to LUTs
-INFO: [Synth 8-5546] ROM "u_control_unit/mem_we" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/mem_re" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5587] ROM size for "u_control_unit/alu_src" is below threshold of ROM address width. It will be mapped to LUTs
-INFO: [Synth 8-5546] ROM "u_control_unit/branch" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/jal" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/jalr" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/lui" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/auipc" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "u_control_unit/vpu_en" won't be mapped to RAM because it is too sparse
-WARNING: [Synth 8-6014] Unused sequential element refresh_cnt_reg was removed.  [D:/comp sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:21]
+WARNING: [Synth 8-6014] Unused sequential element refresh_cnt_reg was removed.  [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/IO/SevenSeg.v:21]
 WARNING: [Synth 8-3331] design DatatRam has unconnected port rst_n
 WARNING: [Synth 8-3331] design DatatRam has unconnected port addr[1]
 WARNING: [Synth 8-3331] design DatatRam has unconnected port addr[0]
@@ -794,7 +857,7 @@ WARNING: [Synth 8-3332] Sequential element (u_step_debounce/cnt_reg[1]) is unuse
 WARNING: [Synth 8-3332] Sequential element (u_step_debounce/cnt_reg[0]) is unused and will be removed from module TopDebug.
 WARNING: [Synth 8-3332] Sequential element (u_step_debounce/btn_posedge_reg) is unused and will be removed from module TopDebug.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:49 ; elapsed = 00:00:52 . Memory (MB): peak = 748.852 ; gain = 518.332
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:59 ; elapsed = 00:03:05 . Memory (MB): peak = 794.672 ; gain = 564.688
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -830,13 +893,13 @@ Report RTL Partitions:
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:54 ; elapsed = 00:00:57 . Memory (MB): peak = 813.551 ; gain = 583.031
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:03:03 ; elapsed = 00:03:09 . Memory (MB): peak = 836.926 ; gain = 606.941
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:01:13 ; elapsed = 00:01:17 . Memory (MB): peak = 957.926 ; gain = 727.406
+Finished Timing Optimization : Time (s): cpu = 00:08:04 ; elapsed = 00:09:15 . Memory (MB): peak = 1004.184 ; gain = 774.199
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -878,7 +941,7 @@ INFO: [Synth 8-4480] The timing for the instance u_data_ram/mem_reg_2 (implement
 INFO: [Synth 8-4480] The timing for the instance u_data_ram/mem_reg_3 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
 INFO: [Synth 8-4480] The timing for the instance u_data_ram/mem_reg_3 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:01:29 ; elapsed = 00:01:34 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Technology Mapping : Time (s): cpu = 00:10:24 ; elapsed = 00:12:07 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -902,7 +965,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:01:30 ; elapsed = 00:01:34 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished IO Insertion : Time (s): cpu = 00:10:26 ; elapsed = 00:12:09 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -915,7 +978,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:01:30 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Renaming Generated Instances : Time (s): cpu = 00:10:26 ; elapsed = 00:12:09 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -927,25 +990,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:31 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:10:29 ; elapsed = 00:12:13 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:01:31 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Renaming Generated Ports : Time (s): cpu = 00:10:29 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:01:31 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Handling Custom Attributes : Time (s): cpu = 00:10:30 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:01:31 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Renaming Generated Nets : Time (s): cpu = 00:10:30 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -961,20 +1024,20 @@ Report Cell Usage:
 +------+---------+------+
 |      |Cell     |Count |
 +------+---------+------+
-|1     |BUFG     |     1|
-|2     |CARRY4   |    99|
-|3     |LUT1     |    10|
-|4     |LUT2     |   142|
-|5     |LUT3     |   327|
-|6     |LUT4     |   401|
-|7     |LUT5     |   530|
-|8     |LUT6     |  2314|
-|9     |MUXF7    |   716|
-|10    |MUXF8    |   221|
+|1     |BUFG     |     2|
+|2     |CARRY4   |   144|
+|3     |LUT1     |    39|
+|4     |LUT2     |   313|
+|5     |LUT3     |   712|
+|6     |LUT4     |   528|
+|7     |LUT5     |   696|
+|8     |LUT6     |  4048|
+|9     |MUXF7    |  1158|
+|10    |MUXF8    |   128|
 |11    |RAM64M   |   640|
 |12    |RAM64X1D |   128|
 |13    |RAMB36E1 |     4|
-|14    |FDCE     |  1393|
+|14    |FDCE     |  2426|
 |15    |FDPE     |     3|
 |16    |FDRE     |   100|
 |17    |IBUF     |    19|
@@ -982,36 +1045,33 @@ Report Cell Usage:
 +------+---------+------+
 
 Report Instance Areas: 
-+------+--------------------+----------------+------+
-|      |Instance            |Module          |Cells |
-+------+--------------------+----------------+------+
-|1     |top                 |                |  7089|
-|2     |  u_cpu             |CPU             |  3638|
-|3     |    u_ex            |EX              |    48|
-|4     |      u_VPU         |VPU             |     8|
-|5     |      u_alu         |ALU             |    16|
-|6     |      u_branch_unit |BranchUnit      |    24|
-|7     |    u_id            |ID              |  3366|
-|8     |      u_reg_file    |RegFile         |  3366|
-|9     |    u_if            |IF              |   121|
-|10    |    u_wb            |WB              |    32|
-|11    |  u_data_ram        |DatatRam        |    47|
-|12    |  u_debug_ctrl      |DebugController |   748|
-|13    |  u_inst_ram        |InstRam         |  2366|
-|14    |  u_mmio            |MMIO            |     8|
-|15    |  u_seven_seg       |SevenSeg        |    55|
-|16    |  u_uart_rx         |UartRx          |    89|
-|17    |  u_uart_tx         |UartTx          |    66|
-+------+--------------------+----------------+------+
++------+------------------+----------------+------+
+|      |Instance          |Module          |Cells |
++------+------------------+----------------+------+
+|1     |top               |                | 11129|
+|2     |  u_cpu           |CPU             |  7755|
+|3     |    u_ex          |EX              |    32|
+|4     |    u_id          |ID              |  7092|
+|5     |      u_freg_file |FRegFile        |  4045|
+|6     |      u_reg_file  |RegFile         |  3047|
+|7     |    u_if          |IF              |   529|
+|8     |  u_data_ram      |DatatRam        |     7|
+|9     |  u_debug_ctrl    |DebugController |   769|
+|10    |  u_inst_ram      |InstRam         |  2284|
+|11    |  u_mmio          |MMIO            |     8|
+|12    |  u_seven_seg     |SevenSeg        |    77|
+|13    |  u_uart_rx       |UartRx          |    88|
+|14    |  u_uart_tx       |UartTx          |    66|
++------+------------------+----------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:01:31 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Finished Writing Synthesis Report : Time (s): cpu = 00:10:30 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 96 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:01:25 ; elapsed = 00:01:32 . Memory (MB): peak = 1030.664 ; gain = 455.414
-Synthesis Optimization Complete : Time (s): cpu = 00:01:31 ; elapsed = 00:01:35 . Memory (MB): peak = 1030.664 ; gain = 800.145
+Synthesis Optimization Runtime : Time (s): cpu = 00:10:23 ; elapsed = 00:12:10 . Memory (MB): peak = 1136.086 ; gain = 564.469
+Synthesis Optimization Complete : Time (s): cpu = 00:10:30 ; elapsed = 00:12:15 . Memory (MB): peak = 1136.086 ; gain = 906.102
 INFO: [Project 1-571] Translating synthesized netlist
-INFO: [Netlist 29-17] Analyzing 1827 Unisim elements for replacement
-INFO: [Netlist 29-28] Unisim Transformation completed in 1 CPU seconds
+INFO: [Netlist 29-17] Analyzing 2221 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 2 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Project 1-111] Unisim Transformation Summary:
@@ -1020,11 +1080,11 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM64X1D => RAM64X1D (RAMD64E, RAMD64E): 128 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-194 Infos, 151 Warnings, 0 Critical Warnings and 0 Errors encountered.
+215 Infos, 151 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:01:34 ; elapsed = 00:01:40 . Memory (MB): peak = 1030.664 ; gain = 804.578
-INFO: [Common 17-1381] The checkpoint 'D:/Xilinx/llib/cpu_project/cpu_project.runs/synth_1/TopDebug.dcp' has been generated.
-write_checkpoint: Time (s): cpu = 00:00:01 ; elapsed = 00:09:19 . Memory (MB): peak = 1030.664 ; gain = 0.000
+synth_design: Time (s): cpu = 00:10:42 ; elapsed = 00:12:30 . Memory (MB): peak = 1136.086 ; gain = 910.113
+INFO: [Common 17-1381] The checkpoint 'D:/Xilinx/llib/cpu/cpu.runs/synth_1/TopDebug.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1136.086 ; gain = 0.000
 INFO: [runtcl-4] Executing : report_utilization -file TopDebug_utilization_synth.rpt -pb TopDebug_utilization_synth.pb
-report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.184 . Memory (MB): peak = 1030.664 ; gain = 0.000
-INFO: [Common 17-206] Exiting Vivado at Wed May 20 15:10:39 2026...
+report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.275 . Memory (MB): peak = 1136.086 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Sun May 24 17:06:26 2026...

@@ -83,7 +83,7 @@ module TopDebug  #(
    wire cpu_step;
    wire cpu_reset;
 
-   wire [4:0]  dbg_reg_addr;
+   wire [5:0]  dbg_reg_addr;
    wire [31:0] dbg_reg_data;
    wire [31:0] dbg_pc;
 

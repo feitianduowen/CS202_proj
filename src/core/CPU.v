@@ -82,6 +82,8 @@ module CPU (
     wire [31:0] fp_result;
     wire [31:0] fp_wb_data;
 
+    reg load_is_fp_r;
+
         // ============================================================
     // Load state machine for synchronous DataRam
     // ============================================================
@@ -163,18 +165,36 @@ module CPU (
     // load 第一拍/等待拍不写寄存器；只有 LD_WB 写回
     // 非 load 指令仍然单周期写回
 
-    wire is_fp_load = (opcode == 7'b0000111);
+    // wire is_fp_load = (opcode == 7'b0000111);
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            load_is_fp_r <= 1'b0;
+        end else if (cpu_en) begin
+            case (load_state)
+                LD_IDLE: begin
+                    if (is_load_inst) begin
+                        load_is_fp_r <= (opcode == 7'b0000111);
+                    end
+                end
+
+                LD_WB: begin
+                    load_is_fp_r <= 1'b0;
+                end
+            endcase
+        end
+    end
 
     assign reg_we_eff =
         cpu_en & (
             ((load_state == LD_IDLE) & reg_we_dec & ~is_load_inst) |
-            (load_state == LD_WB & ~is_fp_load)
+            (load_state == LD_WB & ~load_is_fp_r)
         );
 
-    assign fp_we_eff = 
+    assign fp_we_eff =
         cpu_en & (
             ((load_state == LD_IDLE) & fp_we & ~is_load_inst) |
-            (load_state == LD_WB & is_fp_load)
+            (load_state == LD_WB & load_is_fp_r)
         );
 
     // store 只在空闲状态执行，避免 load stall 期间重复写
@@ -315,7 +335,7 @@ module CPU (
 
     .fp_result(fp_result),
     .fp_wb_sel(fp_wb_sel),
-    .fp_we(fp_we),
+    .fp_we(fp_we_eff),
     .fp_wb_data(fp_wb_data)
     );
 

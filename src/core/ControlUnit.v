@@ -169,28 +169,35 @@ module ControlUnit (
             end
 
             7'b1010011: begin
-                // fadd.s/fsub.s
-                fp_we = 1'b1;
-                fp_wb_sel = 1'b0;
-                fp_sub = funct7[2];
+                // fadd.s / fsub.s
+                if ((funct7 == 7'b0000000 || funct7 == 7'b0000100) &&
+                    (funct3 == 3'b000 || funct3 == 3'b111)) begin
+                    fp_we    = 1'b1;
+                    fp_wb_sel = 1'b0;
+                    fp_sub   = (funct7 == 7'b0000100);
+                end
             end
 
             7'b0000111: begin
                 // flw
-                fp_we = 1'b1;
-                reg_we = 1'b0;
-                mem_re = 1'b1;
-                fp_wb_sel = 1'b1;
-                alu_src = 1'b1;
-                alu_op = ALU_ADD;
-                wb_sel = WB_MEM;
+                if (funct3 == 3'b010) begin
+                    fp_we     = 1'b1;
+                    reg_we    = 1'b0;
+                    mem_re    = 1'b1;
+                    fp_wb_sel = 1'b1;
+                    alu_src   = 1'b1;
+                    alu_op    = ALU_ADD;
+                    wb_sel    = WB_MEM;
+                end
             end
 
             7'b0100111: begin
                 // fsw
-                mem_we = 1'b1;
-                alu_src = 1'b1;
-                alu_op = ALU_ADD;
+                if (funct3 == 3'b010) begin
+                    mem_we  = 1'b1;
+                    alu_src = 1'b1;
+                    alu_op  = ALU_ADD;
+                end
             end
 
             default: begin

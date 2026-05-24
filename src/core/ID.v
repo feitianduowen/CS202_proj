@@ -61,6 +61,8 @@ module ID (
         .imm(imm)
     );
 
+    wire [4:0] dbg_idx = dbg_reg_addr[4:0];
+
     RegFile u_reg_file (
         .clk(clk),
         .rst_n(rst_n),
@@ -71,7 +73,7 @@ module ID (
         .wdata(wb_wdata),
         .rdata1(rs1_data),
         .rdata2(rs2_data),
-        .dbg_reg_addr(dbg_reg_addr),
+        .dbg_reg_addr(dbg_idx),
         .dbg_reg_data(int_dbg_data)
     );
 
@@ -85,7 +87,7 @@ module ID (
         .wdata(fp_wb_wdata),
         .rdata1(fp_rs1_data),
         .rdata2(fp_rs2_data),
-        .dbg_reg_addr(dbg_reg_addr),
+        .dbg_reg_addr(dbg_idx),
         .dbg_reg_data(fp_dbg_data)
     );
 
