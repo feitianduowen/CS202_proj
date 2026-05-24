@@ -20,16 +20,17 @@ module TopDebug  #(
    output wire [7:0] tube_signal_right
 );
 
-    reg [1:0] clk_div_cnt;
+    reg [3:0] clk_div_cnt;
 
     always @(posedge clk_100 or negedge rst_n) begin
         if (!rst_n)
-            clk_div_cnt <= 2'b00;
+            clk_div_cnt <= 4'b0000;
         else
-            clk_div_cnt <= clk_div_cnt + 2'b01;
+            clk_div_cnt <= clk_div_cnt + 4'b0001;
     end
 
-    wire clk_cpu_raw = clk_div_cnt[1];
+    // 100 MHz / 16 = 6.25 MHz
+    wire clk_cpu_raw = clk_div_cnt[3];
 
     wire clk_cpu;
     BUFG u_bufg_cpu (
@@ -54,7 +55,7 @@ module TopDebug  #(
    wire tx_busy;
 
    UartRx #(
-      .CLK_FREQ(25_000_000),
+      .CLK_FREQ(6_250_000),
       .BAUD(115200)
    ) u_uart_rx (
       .clk    (clk_cpu),
@@ -65,7 +66,7 @@ module TopDebug  #(
    );
 
    UartTx #(
-      .CLK_FREQ(25_000_000),
+      .CLK_FREQ(6_250_000),
       .BAUD(115200)
    ) u_uart_tx (
       .clk    (clk_cpu),

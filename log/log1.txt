@@ -14,9 +14,9 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 22028 
+INFO: Helper process launched with PID 5108 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:03 . Memory (MB): peak = 335.125 ; gain = 105.141
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 335.750 ; gain = 105.117
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-638] synthesizing module 'TopDebug' [D:/comp_sci/CS202 Computer Organization/OrganProj/cpu-project-team/src/top/TopDebug.v:1]
 	Parameter INST_INIT_FILE bound to: inst.mem - type: string 
@@ -236,7 +236,7 @@ WARNING: [Synth 8-3331] design InstRam has unconnected port inst_dbg_addr[16]
 WARNING: [Synth 8-3331] design InstRam has unconnected port inst_dbg_addr[15]
 WARNING: [Synth 8-3331] design InstRam has unconnected port inst_dbg_addr[14]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 413.406 ; gain = 183.422
+Finished RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 413.195 ; gain = 182.562
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -246,7 +246,7 @@ Report Check Netlist:
 |1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
 +------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 413.406 ; gain = 183.422
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 413.195 ; gain = 182.562
 ---------------------------------------------------------------------------------
 INFO: [Device 21-403] Loading part xc7a35tcsg324-1
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -262,22 +262,22 @@ Completed Processing XDC Constraints
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 755.039 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 754.840 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 755.039 ; gain = 525.055
+Finished Constraint Validation : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 754.840 ; gain = 524.207
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcsg324-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 755.039 ; gain = 525.055
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 754.840 ; gain = 524.207
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 755.039 ; gain = 525.055
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 754.840 ; gain = 524.207
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5546] ROM "state" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
@@ -404,7 +404,7 @@ WARNING: [Synth 8-6014] Unused sequential element refresh_cnt_reg was removed.  
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'DebugController'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 755.039 ; gain = 525.055
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:11 ; elapsed = 00:00:13 . Memory (MB): peak = 754.840 ; gain = 524.207
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -417,15 +417,15 @@ Start RTL Component Statistics
 ---------------------------------------------------------------------------------
 Detailed RTL Component Info : 
 +---Adders : 
-	   2 Input     32 Bit       Adders := 6     
+	   2 Input     32 Bit       Adders := 8     
 	   3 Input     32 Bit       Adders := 1     
 	   2 Input     28 Bit       Adders := 1     
 	   2 Input     27 Bit       Adders := 1     
 	   3 Input     27 Bit       Adders := 1     
 	   2 Input     25 Bit       Adders := 1     
 	   2 Input     16 Bit       Adders := 2     
-	   2 Input      8 Bit       Adders := 18    
 	   3 Input      8 Bit       Adders := 17    
+	   2 Input      8 Bit       Adders := 14    
 	   2 Input      5 Bit       Adders := 2     
 	   2 Input      4 Bit       Adders := 3     
 	   2 Input      3 Bit       Adders := 3     
@@ -447,7 +447,7 @@ Detailed RTL Component Info :
 +---RAMs : 
 	             128K Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input     32 Bit        Muxes := 32    
+	   2 Input     32 Bit        Muxes := 33    
 	  10 Input     32 Bit        Muxes := 1     
 	  33 Input     32 Bit        Muxes := 3     
 	   4 Input     32 Bit        Muxes := 3     
@@ -457,7 +457,7 @@ Detailed RTL Component Info :
 	   4 Input     16 Bit        Muxes := 2     
 	   2 Input     14 Bit        Muxes := 1     
 	   4 Input      8 Bit        Muxes := 2     
-	   2 Input      8 Bit        Muxes := 32    
+	   2 Input      8 Bit        Muxes := 28    
 	  12 Input      8 Bit        Muxes := 1     
 	   5 Input      8 Bit        Muxes := 1     
 	   3 Input      8 Bit        Muxes := 4     
@@ -634,13 +634,14 @@ Detailed RTL Component Info :
 Module VPU 
 Detailed RTL Component Info : 
 +---Adders : 
-	   2 Input      8 Bit       Adders := 4     
+	   2 Input     32 Bit       Adders := 2     
 	   3 Input      8 Bit       Adders := 4     
 +---XORs : 
 	   2 Input      8 Bit         XORs := 4     
 +---Muxes : 
-	   2 Input      8 Bit        Muxes := 12    
+	   2 Input     32 Bit        Muxes := 1     
 	  13 Input      8 Bit        Muxes := 4     
+	   2 Input      8 Bit        Muxes := 8     
 Module FPAdd 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -857,7 +858,7 @@ WARNING: [Synth 8-3332] Sequential element (u_step_debounce/cnt_reg[1]) is unuse
 WARNING: [Synth 8-3332] Sequential element (u_step_debounce/cnt_reg[0]) is unused and will be removed from module TopDebug.
 WARNING: [Synth 8-3332] Sequential element (u_step_debounce/btn_posedge_reg) is unused and will be removed from module TopDebug.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:59 ; elapsed = 00:03:05 . Memory (MB): peak = 794.672 ; gain = 564.688
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:03:12 ; elapsed = 00:03:24 . Memory (MB): peak = 795.914 ; gain = 565.281
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -893,13 +894,13 @@ Report RTL Partitions:
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:03:03 ; elapsed = 00:03:09 . Memory (MB): peak = 836.926 ; gain = 606.941
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:03:16 ; elapsed = 00:03:28 . Memory (MB): peak = 840.668 ; gain = 610.035
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:08:04 ; elapsed = 00:09:15 . Memory (MB): peak = 1004.184 ; gain = 774.199
+Finished Timing Optimization : Time (s): cpu = 00:04:45 ; elapsed = 00:05:06 . Memory (MB): peak = 1004.656 ; gain = 774.023
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -941,7 +942,7 @@ INFO: [Synth 8-4480] The timing for the instance u_data_ram/mem_reg_2 (implement
 INFO: [Synth 8-4480] The timing for the instance u_data_ram/mem_reg_3 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
 INFO: [Synth 8-4480] The timing for the instance u_data_ram/mem_reg_3 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:10:24 ; elapsed = 00:12:07 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Technology Mapping : Time (s): cpu = 00:08:08 ; elapsed = 00:09:39 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -965,7 +966,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:10:26 ; elapsed = 00:12:09 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished IO Insertion : Time (s): cpu = 00:08:12 ; elapsed = 00:09:43 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -978,7 +979,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:10:26 ; elapsed = 00:12:09 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Renaming Generated Instances : Time (s): cpu = 00:08:13 ; elapsed = 00:09:44 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -990,25 +991,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:10:29 ; elapsed = 00:12:13 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:08:15 ; elapsed = 00:09:47 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:10:29 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Renaming Generated Ports : Time (s): cpu = 00:08:16 ; elapsed = 00:09:48 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:10:30 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Handling Custom Attributes : Time (s): cpu = 00:08:16 ; elapsed = 00:09:48 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:10:30 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Renaming Generated Nets : Time (s): cpu = 00:08:16 ; elapsed = 00:09:48 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1025,14 +1026,14 @@ Report Cell Usage:
 |      |Cell     |Count |
 +------+---------+------+
 |1     |BUFG     |     2|
-|2     |CARRY4   |   144|
-|3     |LUT1     |    39|
-|4     |LUT2     |   313|
-|5     |LUT3     |   712|
-|6     |LUT4     |   528|
-|7     |LUT5     |   696|
-|8     |LUT6     |  4048|
-|9     |MUXF7    |  1158|
+|2     |CARRY4   |   160|
+|3     |LUT1     |   103|
+|4     |LUT2     |   302|
+|5     |LUT3     |   737|
+|6     |LUT4     |   523|
+|7     |LUT5     |   699|
+|8     |LUT6     |  4049|
+|9     |MUXF7    |  1161|
 |10    |MUXF8    |   128|
 |11    |RAM64M   |   640|
 |12    |RAM64X1D |   128|
@@ -1048,29 +1049,29 @@ Report Instance Areas:
 +------+------------------+----------------+------+
 |      |Instance          |Module          |Cells |
 +------+------------------+----------------+------+
-|1     |top               |                | 11129|
-|2     |  u_cpu           |CPU             |  7755|
+|1     |top               |                | 11225|
+|2     |  u_cpu           |CPU             |  7850|
 |3     |    u_ex          |EX              |    32|
-|4     |    u_id          |ID              |  7092|
+|4     |    u_id          |ID              |  7185|
 |5     |      u_freg_file |FRegFile        |  4045|
-|6     |      u_reg_file  |RegFile         |  3047|
-|7     |    u_if          |IF              |   529|
+|6     |      u_reg_file  |RegFile         |  3140|
+|7     |    u_if          |IF              |   531|
 |8     |  u_data_ram      |DatatRam        |     7|
 |9     |  u_debug_ctrl    |DebugController |   769|
-|10    |  u_inst_ram      |InstRam         |  2284|
+|10    |  u_inst_ram      |InstRam         |  2285|
 |11    |  u_mmio          |MMIO            |     8|
 |12    |  u_seven_seg     |SevenSeg        |    77|
 |13    |  u_uart_rx       |UartRx          |    88|
 |14    |  u_uart_tx       |UartTx          |    66|
 +------+------------------+----------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:10:30 ; elapsed = 00:12:14 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Finished Writing Synthesis Report : Time (s): cpu = 00:08:16 ; elapsed = 00:09:48 . Memory (MB): peak = 1136.801 ; gain = 906.168
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 96 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:10:23 ; elapsed = 00:12:10 . Memory (MB): peak = 1136.086 ; gain = 564.469
-Synthesis Optimization Complete : Time (s): cpu = 00:10:30 ; elapsed = 00:12:15 . Memory (MB): peak = 1136.086 ; gain = 906.102
+Synthesis Optimization Runtime : Time (s): cpu = 00:08:10 ; elapsed = 00:09:44 . Memory (MB): peak = 1136.801 ; gain = 564.523
+Synthesis Optimization Complete : Time (s): cpu = 00:08:17 ; elapsed = 00:09:48 . Memory (MB): peak = 1136.801 ; gain = 906.168
 INFO: [Project 1-571] Translating synthesized netlist
-INFO: [Netlist 29-17] Analyzing 2221 Unisim elements for replacement
+INFO: [Netlist 29-17] Analyzing 2240 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 2 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
@@ -1082,9 +1083,9 @@ INFO: [Project 1-111] Unisim Transformation Summary:
 INFO: [Common 17-83] Releasing license: Synthesis
 215 Infos, 151 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:10:42 ; elapsed = 00:12:30 . Memory (MB): peak = 1136.086 ; gain = 910.113
+synth_design: Time (s): cpu = 00:08:28 ; elapsed = 00:10:03 . Memory (MB): peak = 1136.801 ; gain = 910.727
 INFO: [Common 17-1381] The checkpoint 'D:/Xilinx/llib/cpu/cpu.runs/synth_1/TopDebug.dcp' has been generated.
-write_checkpoint: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1136.086 ; gain = 0.000
+write_checkpoint: Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1136.801 ; gain = 0.000
 INFO: [runtcl-4] Executing : report_utilization -file TopDebug_utilization_synth.rpt -pb TopDebug_utilization_synth.pb
-report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.275 . Memory (MB): peak = 1136.086 ; gain = 0.000
-INFO: [Common 17-206] Exiting Vivado at Sun May 24 17:06:26 2026...
+report_utilization: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.393 . Memory (MB): peak = 1136.801 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Sun May 24 17:59:47 2026...

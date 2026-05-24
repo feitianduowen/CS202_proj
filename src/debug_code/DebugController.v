@@ -114,31 +114,48 @@ module DebugController (
         end
     endfunction
 
+    integer i;
     // Main state machine
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            state        <= S_IDLE;
-            cmd_reg      <= 0;
-            payload_cnt  <= 0;
-            payload_need <= 0;
-            cpu_halt     <= 1'b0;
-            cpu_step     <= 1'b0;
-            step_countdown <= 4'b0000;
-            cpu_reset    <= 1'b0;
-            dbg_reg_addr <= 0;
-            inst_dbg_en  <= 0;
-            inst_wr_en   <= 0;
-            inst_dbg_addr <= 0;
-            inst_wr_data <= 0;
-            dmem_dbg_en  <= 0;
-            dmem_wr_en   <= 0;
-            dmem_dbg_addr <= 0;
-            dmem_wr_data <= 0;
-            mem_wait_cnt <= 0;
-            tx_data      <= 0;
-            tx_start     <= 0;
-            resp_len     <= 0;
-            resp_idx     <= 0;
+            state <= S_IDLE;
+            cmd_reg <= 8'd0;
+            payload_cnt <= 4'd0;
+            payload_need <= 4'd0;
+
+            cpu_halt <= 1'b0;
+            cpu_step <= 1'b0;
+            step_countdown <= 4'd0;
+            cpu_reset <= 1'b0;
+
+            dbg_reg_addr <= 5'd0;
+
+            inst_dbg_en <= 1'b0;
+            inst_wr_en <= 1'b0;
+            inst_dbg_addr <= 32'd0;
+            inst_wr_data <= 32'd0;
+
+            dmem_dbg_en <= 1'b0;
+            dmem_wr_en <= 1'b0;
+            dmem_dbg_addr <= 32'd0;
+            dmem_wr_data <= 32'd0;
+
+            mem_wait_cnt <= 5'd0;
+
+            tx_data <= 8'd0;
+            tx_start <= 1'b0;
+
+            resp_data <= 32'd0;
+            resp_len <= 3'd0;
+            resp_idx <= 3'd0;
+
+            for (i = 0; i < 8; i = i + 1) begin
+                payload[i] <= 8'd0;
+            end
+
+            for (i = 0; i < 5; i = i + 1) begin
+                resp_buf[i] <= 8'd0;
+            end
         end else begin
             tx_start    <= 1'b0;
             cpu_reset   <= 1'b0;
