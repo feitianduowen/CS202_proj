@@ -33,13 +33,8 @@ module VPU (
     always @(*) begin
         case (vp_op)
             VPU_NOT: begin r0 = ~a0;  r1 = ~a1;  r2 = ~a2;  r3 = ~a3;  end
-            VPU_NEG: begin r0 = -a0;  r1 = -a1;  r2 = -a2;  r3 = -a3;  end
-            VPU_ABS: begin 
-                r0 = (a0[7]) ? -a0 : a0;
-                r1 = (a1[7]) ? -a1 : a1;
-                r2 = (a2[7]) ? -a2 : a2;
-                r3 = (a3[7]) ? -a3 : a3; 
-            end
+            VPU_NEG: begin {r3, r2, r1, r0} = -a + 32'd1; end
+            VPU_ABS: begin {r3, r2, r1, r0} = a[31] ? (~a + 32'd1) : a; end
             VPU_ADD: begin r0 = a0 + b0; r1 = a1 + b1; r2 = a2 + b2; r3 = a3 + b3; end
             VPU_SUB: begin r0 = a0 - b0; r1 = a1 - b1; r2 = a2 - b2; r3 = a3 - b3; end
             VPU_AND: begin r0 = a0 & b0; r1 = a1 & b1; r2 = a2 & b2; r3 = a3 & b3; end
