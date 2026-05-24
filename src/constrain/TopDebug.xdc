@@ -1,6 +1,6 @@
 create_clock -period 10.000 -name clk_100 [get_ports clk_100]
 
-create_generated_clock -name clk_cpu -source [get_ports clk_100] -divide_by 16 [get_pins {u_bufg_cpu/O}]
+create_generated_clock -name clk_cpu -source [get_ports clk_100] -divide_by 4 [get_pins {u_bufg_cpu/O}]
 
 set_property PACKAGE_PIN G2 [get_ports {tube_scan[7]}]
 set_property PACKAGE_PIN C2 [get_ports {tube_scan[6]}]
@@ -141,3 +141,10 @@ set_property IOSTANDARD LVCMOS33 [get_ports {small_led[0]}]
 
 set_property IOSTANDARD LVCMOS33 [get_ports tx]
 set_property IOSTANDARD LVCMOS33 [get_ports rx]
+# PS/2 keyboard input for keyboard bonus
+set_property PACKAGE_PIN K5 [get_ports keyboard_clk]
+set_property PACKAGE_PIN L4 [get_ports keyboard_data]
+set_property IOSTANDARD LVCMOS33 [get_ports keyboard_clk]
+set_property IOSTANDARD LVCMOS33 [get_ports keyboard_data]
+set_property PULLUP true [get_ports keyboard_clk]
+set_property PULLUP true [get_ports keyboard_data]

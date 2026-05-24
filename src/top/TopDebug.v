@@ -9,6 +9,9 @@ module TopDebug  #(
    input  wire rx,
    output wire tx,
 
+   input  wire keyboard_clk,
+   input  wire keyboard_data,
+
    input  wire [7:0] switch,
    input  wire [7:0] small_switch,
    input  wire start_pg,
@@ -20,17 +23,16 @@ module TopDebug  #(
    output wire [7:0] tube_signal_right
 );
 
-    reg [3:0] clk_div_cnt;
+    reg [1:0] clk_div_cnt;
 
     always @(posedge clk_100 or negedge rst_n) begin
         if (!rst_n)
-            clk_div_cnt <= 4'b0000;
+            clk_div_cnt <= 2'b00;
         else
-            clk_div_cnt <= clk_div_cnt + 4'b0001;
+            clk_div_cnt <= clk_div_cnt + 2'b01;
     end
 
-    // 100 MHz / 16 = 6.25 MHz
-    wire clk_cpu_raw = clk_div_cnt[3];
+    wire clk_cpu_raw = clk_div_cnt[1];
 
     wire clk_cpu;
     BUFG u_bufg_cpu (
@@ -42,7 +44,8 @@ module TopDebug  #(
     assign cpu_run_en = cpu_step
                     & ~inst_dbg_en
                     & ~dmem_dbg_en
-                    & ~testcase_update_busy;
+                    & ~testcase_update_busy
+                    & ~kb_update_busy;
 
 
    // =========================
@@ -55,7 +58,7 @@ module TopDebug  #(
    wire tx_busy;
 
    UartRx #(
-      .CLK_FREQ(6_250_000),
+      .CLK_FREQ(25_000_000),
       .BAUD(115200)
    ) u_uart_rx (
       .clk    (clk_cpu),
@@ -66,7 +69,7 @@ module TopDebug  #(
    );
 
    UartTx #(
-      .CLK_FREQ(6_250_000),
+      .CLK_FREQ(25_000_000),
       .BAUD(115200)
    ) u_uart_tx (
       .clk    (clk_cpu),
@@ -99,6 +102,27 @@ module TopDebug  #(
    wire [31:0] dmem_dbg_addr;
    wire [31:0] dmem_wr_data;
    wire [31:0] dmem_rd_data;
+
+
+   // =========================
+   // PS/2 keyboard testcase input
+   // =========================
+   wire        kb_dmem_en;
+   wire        kb_dmem_we;
+   wire [31:0] kb_dmem_addr;
+   wire [31:0] kb_dmem_wdata;
+   wire        kb_update_busy;
+   wire [31:0] kb_current_value;
+   wire [31:0] kb_case_value;
+   wire [31:0] kb_op_a_value;
+   wire [31:0] kb_op_b_value;
+   wire [31:0] kb_result_value;
+   wire [1:0]  kb_input_field;
+   wire [3:0]  kb_digit_count;
+   wire [7:0]  kb_last_key;
+   wire        kb_frame_error;
+   wire        kb_commit_done;
+
 
    DebugController u_debug_ctrl (
       .clk     (clk_cpu),
@@ -134,6 +158,34 @@ module TopDebug  #(
 
    wire cpu_rst_n;
    assign cpu_rst_n = rst_n & ~cpu_reset;
+
+
+   KeyboardInput u_keyboard_input (
+      .clk(clk_cpu),
+      .rst_n(rst_n),
+
+      .ps2_clk(keyboard_clk),
+      .ps2_data(keyboard_data),
+
+      .dmem_ready(~dmem_dbg_en),
+      .dmem_rdata(dmem_rd_data),
+      .dmem_en(kb_dmem_en),
+      .dmem_we(kb_dmem_we),
+      .dmem_addr(kb_dmem_addr),
+      .dmem_wdata(kb_dmem_wdata),
+      .update_busy(kb_update_busy),
+
+      .current_value(kb_current_value),
+      .case_value(kb_case_value),
+      .op_a_value(kb_op_a_value),
+      .op_b_value(kb_op_b_value),
+      .result_value(kb_result_value),
+      .input_field(kb_input_field),
+      .digit_count(kb_digit_count),
+      .last_key(kb_last_key),
+      .frame_error(kb_frame_error),
+      .commit_done(kb_commit_done)
+   );
 
    // =========================
    // CPU + memory wires
@@ -266,6 +318,20 @@ end
    .LED(led)
 );
 
+wire        mem_b_use_dbg;
+wire        mem_b_use_kb;
+wire        mem_b_we;
+wire [31:0] mem_b_addr;
+wire [31:0] mem_b_wdata;
+
+assign mem_b_use_dbg = dmem_dbg_en;
+assign mem_b_use_kb = ~dmem_dbg_en & kb_dmem_en;
+assign mem_b_we = mem_b_use_dbg ? dmem_wr_en :
+                  mem_b_use_kb  ? kb_dmem_we : 1'b0;
+assign mem_b_addr = mem_b_use_dbg ? dmem_dbg_addr :
+                    mem_b_use_kb  ? kb_dmem_addr : 32'b0;
+assign mem_b_wdata = mem_b_use_dbg ? dmem_wr_data : kb_dmem_wdata;
+
 DatatRam #(
    .ADDR_WIDTH(14),
    .DATA_WIDTH(32),
@@ -280,10 +346,10 @@ DatatRam #(
    .dout(ram_rdata),
    .byte(ram_wstrb),
 
-   .we_b   (dmem_dbg_en & dmem_wr_en),
-   .addr_b (dmem_dbg_addr[13:0]),
+   .we_b   (mem_b_we),
+   .addr_b (mem_b_addr[13:0]),
    .dout_b (dmem_rd_data),
-   .din_b  (dmem_wr_data),
+   .din_b  (mem_b_wdata),
    .byte_b (4'b1111)
 );
 
@@ -306,6 +372,11 @@ always @(*) begin
             4'd8: display_data = {28'b0, dmem_wstrb};//current data memory write strobe
             4'd9: display_data = {30'b0, dmem_we, dmem_re};//current data memory write enable and read enable
             4'd10: display_data = board_input;//current board input
+            4'd11: display_data = {15'b0, kb_commit_done, kb_frame_error, kb_update_busy, kb_input_field, kb_digit_count, kb_last_key};
+            4'd12: display_data = kb_current_value;
+            4'd13: display_data = kb_case_value;
+            4'd14: display_data = kb_op_a_value;
+            4'd15: display_data = kb_result_value;
             default: display_data = 32'hDEAD_BEEF;
         endcase
     end
@@ -313,7 +384,7 @@ always @(*) begin
     assign small_led = small_switch;
 
     SevenSeg u_seven_seg (
-        .clk(clk_100),
+        .clk(clk_cpu),
         .rst_n(cpu_rst_n),
         .data(display_data),
         .tube_scan(tube_scan),
