@@ -397,7 +397,7 @@ always @(*) begin
         .btn_in(start_pg),
         .btn_posedge(step_pulse)
     );
-    
+
     assign cpu_run_en = cpu_step
                         & ~inst_dbg_en
                         & ~dmem_dbg_en
