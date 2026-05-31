@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Processor Datapath Display</title>
+<style>
+:root{
+  --bg:#d4e4f7;
+  --panel:#fafafa;
+  --stage:#fcfdff;
+  --grid:#e3edf8;
+  --ink:#1a2332;
+  --muted:#4a6fa5;
+  --border:#9fb3ce;
+  --border-soft:#c8d6e8;
+  --primary:#4a6fa5;
+  --primary-soft:#e7f0fb;
+  --control:#00a8e8;
+  --active:#dc2626;
+  --success:#16a34a;
+}
+*{box-sizing:border-box}
+html{height:100%;overflow:hidden}
+body{height:100%;overflow:hidden;margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.app{height:100dvh;max-height:100dvh;overflow:hidden;display:grid;grid-template-rows:auto 1fr;gap:12px;padding:14px}
+.topbar{background:var(--panel);border:1px solid var(--border-soft);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+h1{font-size:21px;margin:0}
+.toolbar,.row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.nav-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+button,select,input{font:inherit}
+button{border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:4px;padding:7px 10px;font-weight:700;cursor:pointer;transition:background-color .14s ease,border-color .14s ease,box-shadow .14s ease,transform .08s ease}
+button:hover{background:var(--primary-soft);border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,111,165,.16)}
+button:active{transform:translateY(1px) scale(.98);box-shadow:0 0 0 2px rgba(74,111,165,.22)}
+button.active{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:none}
+button.active:hover{background:#27364a;border-color:#27364a}
+.layout{min-height:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px}
+.board-card,.side-card{background:var(--panel);border:1px solid var(--border-soft)}
+.board-card{padding:10px;min-width:0;min-height:0;display:flex;flex-direction:column}
+.board-head{display:flex;justify-content:flex-end;align-items:center;margin-bottom:8px}
+.completion-meter{width:min(360px,45%);min-width:240px}
+.completion-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+.completion-row span{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.completion-row b{font-size:18px;color:var(--ink)}
+.completion-track{height:9px;border:1px solid var(--border);background:#f8fafc;overflow:hidden}
+#completionBar{height:100%;width:0;background:var(--control);transition:width .2s ease}
+.stage-wrap{position:relative;min-height:0;flex:1;border:1px solid var(--border);background:#f8fbff;overflow:hidden}
+.stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:0 0;background:var(--stage);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px}
+.wire-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.module{position:absolute;user-select:none;touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center}
+.module.dragging{cursor:grabbing;filter:drop-shadow(0 12px 18px rgba(15,23,42,.25));z-index:20}
+.module.selected{outline:4px solid rgba(74,111,165,.85);outline-offset:4px}
+.module svg,.module img{width:100%;height:100%;display:block;pointer-events:none}
+.stage.is-blank .module{display:none}
+.side{display:grid;grid-template-rows:max-content max-content minmax(0,1fr);gap:10px;min-height:0;overflow:hidden}
+.side-card{padding:12px;min-height:0;overflow:hidden}
+.side-card:first-child{overflow:auto}
+.side-card:last-child{display:flex;flex-direction:column}
+.title{font-weight:800;font-size:15px;margin-bottom:8px;color:var(--ink)}
+select{width:100%;padding:7px;border:1px solid var(--border);background:#fff;margin-bottom:8px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:8px 0}
+.stepbox{background:#f7fbff;border:1px solid var(--border-soft);padding:10px;min-height:92px}
+.stepbox h3{font-size:17px;margin:0 0 6px}
+.stepbox p{font-size:13px;line-height:1.55;color:var(--muted);margin:0}
+.signals{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.signal{display:flex;justify-content:space-between;border:1px solid var(--border-soft);background:#f7fbff;padding:6px;font-size:12px}
+.signal b{font-family:Consolas,monospace}
+.checklist{min-height:0;max-height:none;overflow:auto;margin-top:8px;padding-right:2px}
+.check{display:flex;gap:6px;align-items:center;font-size:12px;border:1px solid var(--border-soft);background:#f7fbff;padding:5px;margin-bottom:4px}
+.ok{color:var(--success);font-weight:900}.miss{color:var(--border);font-weight:900}
+label{font-size:12px;color:var(--muted)}
+details{min-height:0;overflow:hidden;border:1px solid var(--border-soft);background:#f7fbff;padding:8px}
+details[open]{height:100%}
+details[open] .checklist{height:auto;max-height:none}
+summary{cursor:pointer;font-weight:800;font-size:14px;line-height:18px}
+@media(max-height:850px) and (min-width:1101px){
+  .app{gap:8px;padding:8px}
+  .topbar{padding:8px 12px}
+  h1{font-size:19px}
+  .completion-meter{width:300px;min-width:220px}
+  .layout{grid-template-columns:minmax(0,1fr) 320px;gap:8px}
+  .side{grid-template-rows:minmax(0,1fr) max-content minmax(96px,.65fr);gap:8px}
+  .side-card{padding:9px}
+  .title{font-size:14px;margin-bottom:6px}
+  select{margin-bottom:6px}
+  button{padding:5px 8px}
+  .steps{margin:6px 0}
+  .stepbox{min-height:64px;padding:7px}
+  .stepbox h3{font-size:15px;margin-bottom:4px}
+  .stepbox p{font-size:12px;line-height:1.35}
+  .signal{padding:4px 6px}
+}
+@media(max-width:1100px){html,body{height:auto;overflow:auto}.layout{grid-template-columns:1fr}.app{height:auto;max-height:none;overflow:visible}.stage-wrap{height:60vh}.topbar{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div>
+      <h1>Processor Datapath Display</h1>
+    </div>
+    <div class="toolbar">
+      <button id="standardBtn">Standard Layout</button>
+      <button id="shuffleBtn">Shuffle</button>
+      <button id="showWiresBtn">Show Wires</button>
+      <button id="clearWiresBtn">Hide Wires</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="board-card">
+      <div class="board-head">
+        <div class="completion-meter" aria-label="Wiring completeness">
+          <div class="completion-row">
+            <span>Wiring</span>
+            <b id="completion">0%</b>
+          </div>
+          <div class="completion-track"><div id="completionBar"></div></div>
+        </div>
+      </div>
+      <div id="stageWrap" class="stage-wrap">
+        <div id="stage" class="stage">
+          <svg id="wireLayer" class="wire-layer" viewBox="0 0 1600 900">
+            <defs>
+              <marker id="arrow" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M0,0 L0,10 L12,5 z" fill="currentColor"></path>
+              </marker>
+            </defs>
+          </svg>
+          <div id="modules"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="side-card">
+        <div class="title">Instruction Demo</div>
+        <select id="instSelect"></select>
+        <div class="row">
+          <div class="nav-row">
+            <button id="prevBtn">Prev</button>
+            <button id="autoBtn">Auto</button>
+            <button id="nextBtn">Next</button>
+          </div>
+        </div>
+        <div id="stepBtns" class="steps"></div>
+        <div class="stepbox">
+          <h3 id="stepTitle"></h3>
+          <p id="stepText"></p>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <div class="title">Control Signals</div>
+        <div id="signals" class="signals"></div>
+      </section>
+
+      <section class="side-card">
+        <details>
+          <summary>Wiring Check</summary>
+          <div id="checklist" class="checklist"></div>
+        </details>
+      </section>
+    </aside>
+  </main>
+</div>
+
+<script>
+const modulesEl = document.getElementById('modules');
+const stage = document.getElementById('stage');
+const stageWrap = document.getElementById('stageWrap');
+const wireLayer = document.getElementById('wireLayer');
+
+let scale = 1;
+let mode = 'demo';
+let instKey = 'rtype';
+let step = 0;
+let autoTimer = null;
+let selectedForWire = null;
+let showAllWires = false;
+let highlightOn = false;
+let boardView = 'blank';
+
+const signalOrder = ['Branch','MemRead','MemtoReg','ALUOp','MemWrite','ALUSrc','RegWrite','PCSrc'];
+
+const moduleDefs = {
+  pc:{name:'PC',type:'pc',x:150,y:405,w:37.2,h:116.7},
+  imem:{name:'Instruction memory',type:'imem',x:235,y:365,w:113.7,h:164.4},
+  add4:{name:'Add (PC+4)',type:'add',x:330,y:155,w:56.8,h:131.1},
+  control:{name:'Control',type:'control',x:535,y:185,w:64.2,h:168.9},
+  regs:{name:'Registers',type:'regs',x:650,y:365,w:135.1,h:190},
+  imm:{name:'Imm Gen',type:'imm',x:690,y:640,w:86.8,h:132.2},
+  shift:{name:'Shift left 1',type:'shift',x:850,y:190,w:73.2,h:91.1},
+  branchAdd:{name:'Add (branch target)',type:'branchAdd',x:1035,y:170,w:54.6,h:126},
+  pcMux:{name:'PCSrc MUX',type:'mux',x:1245,y:145,w:48.5,h:135},
+  aluMux:{name:'ALUSrc MUX',type:'mux',x:885,y:500,w:42.8,h:128},
+  alu:{name:'ALU',type:'alu',x:1030,y:455,w:99.2,h:138},
+  dmem:{name:'Data memory',type:'dmem',x:1210,y:500,w:114.0,h:170},
+  wbMux:{name:'MemtoReg MUX',type:'mux2',x:1435,y:515,w:44.7,h:136},
+  aluControl:{name:'ALU control',type:'aluControl',x:890,y:700,w:104.6,h:151.1},
+  and:{name:'Branch AND',type:'and',x:1228,y:335,w:51.7,h:62}
+};
+
+const edges = [
+  {id:'pc_imem',from:'pc',to:'imem',label:'PC',kind:'data',fromOffset:0,toOffset:-44},
+  {id:'pc_add4',from:'pc',to:'add4',label:'PC',kind:'data',fromOffset:-34,toOffset:0},
+  {id:'pc_branchadd',from:'pc',to:'branchAdd',label:'PC',kind:'data',fromOffset:-12,toOffset:-34},
+  {id:'add4_pcmux',from:'add4',to:'pcMux',label:'PC+4',kind:'data',fromOffset:-18,toOffset:-38},
+  {id:'branchadd_pcmux',from:'branchAdd',to:'pcMux',label:'Branch target',kind:'data',fromOffset:0,toOffset:24},
+  {id:'pcmux_pc',from:'pcMux',to:'pc',label:'Next PC',kind:'data',loop:true},
+  {id:'imem_control',from:'imem',to:'control',label:'Instruction [6-0]',kind:'data',fromOffset:-52,toOffset:-38},
+  {id:'imem_regs_a',from:'imem',to:'regs',label:'Instruction [19-15]',kind:'data',fromOffset:-18,toOffset:-56},
+  {id:'imem_regs_b',from:'imem',to:'regs',label:'Instruction [24-20]',kind:'data',fromOffset:12,toOffset:-14},
+  {id:'imem_regs_c',from:'imem',to:'regs',label:'Instruction [11-7]',kind:'data',fromOffset:42,toOffset:36},
+  {id:'imem_imm',from:'imem',to:'imm',label:'Instruction [31-0]',kind:'data',fromOffset:62,toOffset:4},
+  {id:'imem_aluctrl',from:'imem',to:'aluControl',label:'Instruction [30,14-12]',kind:'data',fromOffset:78,toOffset:-18},
+  {id:'control_branch',from:'control',to:'and',label:'Branch',kind:'ctrl',fromOffset:-62,toOffset:-12,busY:295,busX:825},
+  {id:'control_memread',from:'control',to:'dmem',label:'MemRead',kind:'ctrl',fromOffset:-38,toOffset:-64,busY:330,busX:835},
+  {id:'control_memtoreg',from:'control',to:'wbMux',label:'MemtoReg',kind:'ctrl',fromOffset:-16,toOffset:-52,busY:420,busX:845},
+  {id:'control_aluop',from:'control',to:'aluControl',label:'ALUOp',kind:'ctrl',fromOffset:8,toOffset:-35,busY:735,busX:1015},
+  {id:'control_memwrite',from:'control',to:'dmem',label:'MemWrite',kind:'ctrl',fromOffset:30,toOffset:52,busY:625,busX:850},
+  {id:'control_alusrc',from:'control',to:'aluMux',label:'ALUSrc',kind:'ctrl',fromOffset:54,toOffset:-48,busY:455,busX:835},
+  {id:'control_regwrite',from:'control',to:'regs',label:'RegWrite',kind:'ctrl',fromOffset:74,toOffset:70,midX:620},
+  {id:'and_pcmux',from:'and',to:'pcMux',label:'PCSrc',kind:'ctrl',fromOffset:0,toOffset:46},
+  {id:'regs_aluA',from:'regs',to:'alu',label:'Read data 1',kind:'data',fromOffset:-58,toOffset:-36},
+  {id:'regs_alumux',from:'regs',to:'aluMux',label:'Read data 2',kind:'data',fromOffset:18,toOffset:16},
+  {id:'imm_alumux',from:'imm',to:'aluMux',label:'Imm',kind:'data',fromOffset:0,toOffset:44},
+  {id:'imm_shift',from:'imm',to:'shift',label:'Imm',kind:'data',fromOffset:-40,toOffset:30},
+  {id:'shift_branchadd',from:'shift',to:'branchAdd',label:'Imm << 1',kind:'data',fromOffset:0,toOffset:30},
+  {id:'alumux_alu',from:'aluMux',to:'alu',label:'B',kind:'data',fromOffset:14,toOffset:36},
+  {id:'aluctrl_alu',from:'aluControl',to:'alu',label:'ALU control',kind:'ctrl',fromOffset:-26,toOffset:62},
+  {id:'alu_dmem',from:'alu',to:'dmem',label:'Address',kind:'data',fromOffset:-8,toOffset:-28},
+  {id:'regs_dmem',from:'regs',to:'dmem',label:'Write data',kind:'data',fromOffset:70,toOffset:56},
+  {id:'alu_wbmux',from:'alu',to:'wbMux',label:'ALU result',kind:'data',fromOffset:42,toOffset:-28},
+  {id:'dmem_wbmux',from:'dmem',to:'wbMux',label:'Read data',kind:'data',fromOffset:-24,toOffset:28},
+  {id:'wbmux_regs',from:'wbMux',to:'regs',label:'Write data',kind:'data',loop:true},
+  {id:'alu_and',from:'alu',to:'and',label:'Zero',kind:'ctrl'}
+];
+
+const instructions = {
+  rtype:{label:'R-type: add x6, x1, x2',asm:'add x6, x1, x2',signals:{Branch:'0',MemRead:'0',MemtoReg:'0',ALUOp:'10',MemWrite:'0',ALUSrc:'0',RegWrite:'1',PCSrc:'0'},steps:[
+    {title:'Fetch',text:'PC sends the address to Instruction memory. The top Add computes PC+4.',edges:['pc_imem','pc_add4','add4_pcmux']},
+    {title:'Decode / Control',text:'Instruction fields drive Control, Registers, and ALU control.',edges:['imem_control','imem_regs_a','imem_regs_b','imem_regs_c','imem_aluctrl','control_regwrite','control_aluop']},
+    {title:'Execute',text:'ALUSrc=0 selects Read data 2. The ALU performs add.',edges:['regs_aluA','regs_alumux','alumux_alu','aluctrl_alu']},
+    {title:'Write Back',text:'MemtoReg=0 selects the ALU result; RegWrite writes rd.',edges:['alu_wbmux','wbmux_regs','control_memtoreg','control_regwrite']},
+    {title:'PC Update',text:'PCSrc=0 selects PC+4 through the PC MUX.',edges:['add4_pcmux','pcmux_pc']}
+  ]},
+  lw:{label:'Load: lw x6, 8(x1)',asm:'lw x6, 8(x1)',signals:{Branch:'0',MemRead:'1',MemtoReg:'1',ALUOp:'00',MemWrite:'0',ALUSrc:'1',RegWrite:'1',PCSrc:'0'},steps:[
+    {title:'Fetch',text:'PC fetches lw and computes PC+4.',edges:['pc_imem','pc_add4','add4_pcmux']},
+    {title:'Decode / ImmGen',text:'Registers read base; Imm Gen produces the offset.',edges:['imem_control','imem_regs_a','imem_regs_c','imem_imm','control_alusrc','control_memread','control_memtoreg','control_regwrite']},
+    {title:'Address Calculate',text:'ALUSrc=1 selects the immediate; ALU computes base + offset.',edges:['regs_aluA','imm_alumux','alumux_alu','aluctrl_alu']},
+    {title:'Memory Read',text:'MemRead reads Data memory at the ALU result address.',edges:['alu_dmem','control_memread','dmem_wbmux']},
+    {title:'Write Back',text:'MemtoReg=1 selects memory Read data for register writeback.',edges:['dmem_wbmux','wbmux_regs','control_memtoreg','control_regwrite']}
+  ]},
+  sw:{label:'Store: sw x6, 8(x1)',asm:'sw x6, 8(x1)',signals:{Branch:'0',MemRead:'0',MemtoReg:'X',ALUOp:'00',MemWrite:'1',ALUSrc:'1',RegWrite:'0',PCSrc:'0'},steps:[
+    {title:'Fetch',text:'PC fetches sw and computes PC+4.',edges:['pc_imem','pc_add4','add4_pcmux']},
+    {title:'Decode / ImmGen',text:'Registers read base and store data; Imm Gen produces the offset.',edges:['imem_control','imem_regs_a','imem_regs_b','imem_imm','control_alusrc','control_memwrite']},
+    {title:'Address Calculate',text:'ALU computes base + offset.',edges:['regs_aluA','imm_alumux','alumux_alu','aluctrl_alu']},
+    {title:'Memory Write',text:'MemWrite writes Read data 2 into Data memory.',edges:['alu_dmem','regs_dmem','control_memwrite']},
+    {title:'PC Update',text:'Store does not write back; PC chooses PC+4.',edges:['add4_pcmux','pcmux_pc']}
+  ]},
+  beq:{label:'Branch: beq x1, x2, offset',asm:'beq x1, x2, offset',signals:{Branch:'1',MemRead:'0',MemtoReg:'X',ALUOp:'01',MemWrite:'0',ALUSrc:'0',RegWrite:'0',PCSrc:'Branch & Zero'},steps:[
+    {title:'Fetch',text:'PC fetches beq and computes PC+4.',edges:['pc_imem','pc_add4','add4_pcmux']},
+    {title:'Decode / Branch Control',text:'Registers read rs1 and rs2; Branch is asserted.',edges:['imem_control','imem_regs_a','imem_regs_b','imem_imm','control_branch']},
+    {title:'Compare',text:'ALU subtracts operands. If equal, Zero=1.',edges:['regs_aluA','regs_alumux','alumux_alu','aluctrl_alu','alu_and']},
+    {title:'Branch Target',text:'Shift left 1 and branch Add compute the target address.',edges:['pc_branchadd','imm_shift','shift_branchadd','branchadd_pcmux']},
+    {title:'PC Select',text:'Branch and Zero drive PCSrc, selecting target or PC+4.',edges:['control_branch','alu_and','and_pcmux','branchadd_pcmux','pcmux_pc']}
+  ]}
+};
+
+const visibleWires = new Set();
+
+const moduleAssets = {
+  pc:'assets/modulesToUse/PC.png',
+  imem:'assets/modulesToUse/IM.png',
+  add:'assets/modulesToUse/add.png',
+  branchAdd:'assets/modulesToUse/add.png',
+  control:'assets/modulesToUse/control.png',
+  regs:'assets/modulesToUse/register.png',
+  imm:'assets/modulesToUse/immgen.png',
+  shift:'assets/modulesToUse/shiftleft1.png',
+  mux:'assets/modulesToUse/mux.png',
+  mux2:'assets/modulesToUse/mux2.png',
+  alu:'assets/modulesToUse/alu2.png',
+  dmem:'assets/modulesToUse/dmem.png',
+  aluControl:'assets/modulesToUse/alucontrol.png',
+  and:'assets/modulesToUse/无标题.png'
+};
+
+const fullStageView = {cx:800,cy:450,w:1600,h:900};
+const standardStageView = {cx:815,cy:470,w:1500,h:860};
+
+function fitStage() {
+  const pad = 12;
+  const view = boardView === 'standard' ? standardStageView : fullStageView;
+  scale = Math.min((stageWrap.clientWidth - pad) / view.w, (stageWrap.clientHeight - pad) / view.h);
+  stage.style.transform = `translate(${-view.cx * scale}px, ${-view.cy * scale}px) scale(${scale})`;
+}
+
+function createModules() {
+  modulesEl.innerHTML = '';
+  Object.entries(moduleDefs).forEach(([id, m]) => {
+    const div = document.createElement('div');
+    div.className = 'module';
+    div.dataset.id = id;
+    div.style.left = `${m.x}px`;
+    div.style.top = `${m.y}px`;
+    div.style.width = `${m.w}px`;
+    div.style.height = `${m.h}px`;
+    div.innerHTML = moduleSvg(m);
+    div.addEventListener('pointerdown', startDrag);
+    div.addEventListener('click', onModuleClick);
+    modulesEl.appendChild(div);
+  });
+}
+
+function blankCanvas() {
+  boardView = 'blank';
+  stage.classList.add('is-blank');
+  showAllWires = false;
+  visibleWires.clear();
+  highlightOn = false;
+  selectedForWire = null;
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('selected'));
+  fitStage();
+  renderAll();
+}
+
+function moduleSvg(m) {
+  if (moduleAssets[m.type]) {
+    return `<img src="${moduleAssets[m.type]}" alt="${m.name}" draggable="false">`;
+  }
+  const w = m.w, h = m.h;
+  const stroke = m.type === 'control' || m.type === 'aluControl' || m.type === 'and' ? '#00aeef' : '#111827';
+  const blue = '#00aeef';
+  const txt = (x,y,t,size=16,weight=400,color='#111827',anchor='start') =>
+    `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${color}" text-anchor="${anchor}">${t}</text>`;
+  const box = `<rect x="1" y="1" width="${w-2}" height="${h-2}" fill="#fff" stroke="${stroke}" stroke-width="2"/>`;
+  if (m.type === 'pc') return `<svg viewBox="0 0 ${w} ${h}">${box}${txt(w/2,h/2+7,'PC',22,700,'#111827','middle')}</svg>`;
+  if (m.type === 'imem') return `<svg viewBox="0 0 ${w} ${h}">${box}${txt(12,30,'Read')}${txt(12,51,'address')}${txt(w/2,89,'Instruction',16,400,'#111827','middle')}${txt(w/2,111,'[31-0]',16,400,'#111827','middle')}${txt(w/2,h-37,'Instruction',18,700,'#111827','middle')}${txt(w/2,h-15,'memory',18,700,'#111827','middle')}</svg>`;
+  if (m.type === 'regs') return `<svg viewBox="0 0 ${w} ${h}">${box}${txt(13,29,'Read')}${txt(13,50,'register 1')}${txt(13,80,'Read')}${txt(13,101,'register 2')}${txt(13,132,'Write')}${txt(13,153,'register')}${txt(13,174,'data')}${txt(w-72,58,'Read')}${txt(w-72,79,'data 1')}${txt(w-72,120,'Read')}${txt(w-72,141,'data 2')}${txt(w-18,h-17,'Registers',18,700,'#111827','end')}</svg>`;
+  if (m.type === 'control') return `<svg viewBox="0 0 ${w} ${h}"><ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-2}" ry="${h/2-2}" fill="#fff" stroke="${blue}" stroke-width="2"/>${txt(w/2,h/2+7,'Control',20,700,blue,'middle')}</svg>`;
+  if (m.type === 'imm') return `<svg viewBox="0 0 ${w} ${h}"><ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-2}" ry="${h/2-2}" fill="#fff" stroke="#111827" stroke-width="2"/>${txt(w/2,h/2-4,'Imm',20,700,'#111827','middle')}${txt(w/2,h/2+20,'Gen',20,700,'#111827','middle')}</svg>`;
+  if (m.type === 'shift') return `<svg viewBox="0 0 ${w} ${h}"><ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-2}" ry="${h/2-2}" fill="#fff" stroke="#111827" stroke-width="2"/>${txt(w/2,h/2-5,'Shift',17,700,'#111827','middle')}${txt(w/2,h/2+16,'left 1',17,700,'#111827','middle')}</svg>`;
+  if (m.type === 'mux') return `<svg viewBox="0 0 ${w} ${h}"><path d="M ${w*.24} 1 Q ${w-1} 1 ${w-1} ${h*.2} L ${w-1} ${h*.8} Q ${w-1} ${h-1} ${w*.24} ${h-1} L 1 ${h*.8} L 1 ${h*.2} Z" fill="#fff" stroke="#111827" stroke-width="2"/>${txt(w*.30,23,'0',14)}${txt(w*.54,h*.43,'M',17,700,'#111827','middle')}${txt(w*.54,h*.58,'u',17,700,'#111827','middle')}${txt(w*.54,h*.73,'x',17,700,'#111827','middle')}${txt(w*.30,h-10,'1',14)}</svg>`;
+  if (m.type === 'alu' || m.type === 'add' || m.type === 'branchAdd') {
+    const label = m.type === 'alu' ? 'ALU' : 'Add';
+    const d = `M 1 1 L ${w-1} ${h*.25} L ${w-1} ${h*.75} L 1 ${h-1} L ${w*.28} ${h*.56} L ${w*.10} ${h*.50} L ${w*.28} ${h*.44} Z`;
+    const extra = m.type === 'alu' ? `${txt(w*.46,h*.42,'ALU',19,700,'#111827','middle')}${txt(w*.54,h*.63,'result',17,400,'#111827','middle')}${txt(w*.47,h*.18,'Zero',14,400,blue,'middle')}` : `${txt(w*.42,h*.56,label,19,700)}${m.type === 'branchAdd' ? txt(w*.78,h*.56,'Sum',16) : ''}`;
+    return `<svg viewBox="0 0 ${w} ${h}"><path d="${d}" fill="#fff" stroke="#111827" stroke-width="2"/>${extra}</svg>`;
+  }
+  if (m.type === 'dmem') return `<svg viewBox="0 0 ${w} ${h}">${box}${txt(14,58,'Address')}${txt(w-57,58,'Read')}${txt(w-57,78,'data')}${txt(14,h-49,'Write')}${txt(14,h-29,'data')}${txt(w-76,h-36,'Data',18,700)}${txt(w-76,h-15,'memory',18,700)}</svg>`;
+  if (m.type === 'aluControl') return `<svg viewBox="0 0 ${w} ${h}"><ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-2}" ry="${h/2-2}" fill="#fff" stroke="${blue}" stroke-width="2"/>${txt(w/2,h/2-3,'ALU',18,700,blue,'middle')}${txt(w/2,h/2+20,'control',18,700,blue,'middle')}</svg>`;
+  if (m.type === 'and') return `<svg viewBox="0 0 ${w} ${h}"><path d="M 1 1 L ${w*.5} 1 Q ${w-1} 1 ${w-1} ${h/2} Q ${w-1} ${h-1} ${w*.5} ${h-1} L 1 ${h-1} Z" fill="#fff" stroke="${blue}" stroke-width="2"/></svg>`;
+  return `<svg viewBox="0 0 ${w} ${h}">${box}</svg>`;
+}
+
+function moduleBox(id) {
+  const el = document.querySelector(`.module[data-id="${id}"]`);
+  return {x:parseFloat(el.style.left),y:parseFloat(el.style.top),w:parseFloat(el.style.width),h:parseFloat(el.style.height)};
+}
+
+function center(id, side, offset = 0) {
+  const b = moduleBox(id);
+  const type = moduleDefs[id].type;
+  if ((side === 'L' || side === 'R') && ['control','imm','shift','aluControl'].includes(type)) {
+    const cy = b.y + b.h / 2;
+    const ry = b.h / 2;
+    const rx = b.w / 2;
+    const dy = Math.max(-ry + 1, Math.min(ry - 1, offset));
+    const xDelta = rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry)));
+    return [b.x + rx + (side === 'R' ? xDelta : -xDelta), cy + dy];
+  }
+  if ((side === 'L' || side === 'R') && ['mux','mux2','and'].includes(type)) {
+    const inset = type === 'and' ? 4 : 8;
+    return [side === 'R' ? b.x + b.w - inset : b.x + inset, b.y + b.h / 2 + offset];
+  }
+  if ((side === 'L' || side === 'R') && type === 'alu') {
+    const cy = b.y + b.h / 2;
+    const dy = offset;
+    const xInset = side === 'R' ? Math.max(2, Math.abs(dy) * 0.42) : Math.max(2, 16 - Math.abs(dy) * 0.12);
+    return [side === 'R' ? b.x + b.w - xInset : b.x + xInset, cy + dy];
+  }
+  if ((side === 'L' || side === 'R') && ['add','branchAdd'].includes(type)) {
+    const cy = b.y + b.h / 2;
+    const dy = offset;
+    const leftInset = Math.max(2, 14 - Math.abs(dy) * 0.12);
+    const rightInset = Math.max(2, Math.abs(dy) * 0.25);
+    return [side === 'R' ? b.x + b.w - rightInset : b.x + leftInset, cy + dy];
+  }
+  if (side === 'L') return [b.x, b.y + b.h / 2 + offset];
+  if (side === 'R') return [b.x + b.w, b.y + b.h / 2 + offset];
+  if (side === 'T') return [b.x + b.w / 2 + offset, b.y];
+  if (side === 'B') return [b.x + b.w / 2 + offset, b.y + b.h];
+  return [b.x + b.w / 2, b.y + b.h / 2];
+}
+
+function edgePath(e) {
+  if (e.points) return `M ${e.points.map(p => p.join(' ')).join(' L ')}`;
+  if (e.loop && e.id === 'pcmux_pc') {
+    const [x1,y1] = center(e.from,'R',-32);
+    const [x2,y2] = center(e.to,'L',0);
+    const top = 40;
+    const right = Math.max(x1 + 90, x2 + 320);
+    const left = x2 - 78;
+    return `M ${x1} ${y1} L ${right} ${y1} L ${right} ${top} L ${left} ${top} L ${left} ${y2} L ${x2} ${y2}`;
+  }
+  if (e.loop && e.id === 'wbmux_regs') {
+    const [x1,y1] = center(e.from,'R',34);
+    const [x2,y2] = center(e.to,'L',72);
+    const bottom = 875;
+    const right = Math.min(x1 + 70, 1540);
+    const left = x2 - 120;
+    return `M ${x1} ${y1} L ${right} ${y1} L ${right} ${bottom} L ${left} ${bottom} L ${left} ${y2} L ${x2} ${y2}`;
+  }
+  const [x1,y1] = center(e.from,e.fromSide || 'R',e.fromOffset || 0);
+  const [x2,y2] = center(e.to,e.toSide || 'L',e.toOffset || 0);
+  if (e.id === 'pc_add4') {
+    const laneX = moduleBox('imem').x - 28;
+    return `M ${x1} ${y1} L ${laneX} ${y1} L ${laneX} ${y2} L ${x2} ${y2}`;
+  }
+  if (e.id === 'pc_branchadd') {
+    const laneX = moduleBox('imem').x - 28;
+    const laneY = moduleBox('add4').y - 42;
+    return `M ${x1} ${y1} L ${laneX} ${y1} L ${laneX} ${laneY} L ${x2 - 54} ${laneY} L ${x2 - 54} ${y2} L ${x2} ${y2}`;
+  }
+  if (e.id === 'add4_pcmux') {
+    const laneY = moduleBox('add4').y - 28;
+    return `M ${x1} ${y1} L ${x1 + 90} ${y1} L ${x1 + 90} ${laneY} L ${x2 - 44} ${laneY} L ${x2 - 44} ${y2} L ${x2} ${y2}`;
+  }
+  if (e.id === 'imem_aluctrl') {
+    const laneY = moduleBox('imm').y + moduleBox('imm').h + 34;
+    return `M ${x1} ${y1} L ${x1 + 32} ${y1} L ${x1 + 32} ${laneY} L ${x2 - 34} ${laneY} L ${x2 - 34} ${y2} L ${x2} ${y2}`;
+  }
+  if (e.id === 'regs_dmem') {
+    const laneY = moduleBox('aluMux').y + moduleBox('aluMux').h + 28;
+    return `M ${x1} ${y1} L ${x1 + 70} ${y1} L ${x1 + 70} ${laneY} L ${x2 - 36} ${laneY} L ${x2 - 36} ${y2} L ${x2} ${y2}`;
+  }
+  if (e.id === 'alu_wbmux') {
+    const laneY = moduleBox('dmem').y - 34;
+    return `M ${x1} ${y1} L ${x1 + 42} ${y1} L ${x1 + 42} ${laneY} L ${x2 - 36} ${laneY} L ${x2 - 36} ${y2} L ${x2} ${y2}`;
+  }
+  const mx = e.midX ?? ((x1 + x2) / 2);
+  if (e.busY !== undefined) {
+    const busX = e.busX ?? (x1 + 32);
+    return `M ${x1} ${y1} L ${busX} ${y1} L ${busX} ${e.busY} L ${x2 - 32} ${e.busY} L ${x2 - 32} ${y2} L ${x2} ${y2}`;
+  }
+  if (Math.abs(y1 - y2) < 18) return `M ${x1} ${y1} L ${x2} ${y2}`;
+  return `M ${x1} ${y1} L ${mx} ${y1} L ${mx} ${y2} L ${x2} ${y2}`;
+}
+
+function renderWires() {
+  wireLayer.querySelectorAll('path.wire').forEach(p => p.remove());
+  const active = mode === 'demo' && highlightOn ? new Set(instructions[instKey].steps[step].edges) : new Set();
+  edges.forEach(e => {
+    if (!showAllWires && !active.has(e.id) && !visibleWires.has(e.id)) return;
+    if (mode === 'practice' && !visibleWires.has(e.id)) return;
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.classList.add('wire');
+    p.setAttribute('d', edgePath(e));
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke', active.has(e.id) ? 'var(--active)' : (e.kind === 'ctrl' ? 'var(--control)' : 'var(--ink)'));
+    p.setAttribute('stroke-width', active.has(e.id) ? '6' : (e.kind === 'ctrl' ? '2.4' : '2.6'));
+    p.setAttribute('opacity', active.has(e.id) ? '1' : (showAllWires ? '.72' : '.86'));
+    p.setAttribute('marker-end','url(#arrow)');
+    p.style.color = active.has(e.id) ? 'var(--active)' : (e.kind === 'ctrl' ? 'var(--control)' : 'var(--ink)');
+    wireLayer.appendChild(p);
+  });
+}
+
+function startDrag(ev) {
+  if (ev.button !== 0) return;
+  const el = ev.currentTarget;
+  el.classList.add('dragging');
+  el.setPointerCapture(ev.pointerId);
+  const startX = ev.clientX, startY = ev.clientY;
+  const left = parseFloat(el.style.left), top = parseFloat(el.style.top);
+  function move(e) {
+    el.style.left = `${left + (e.clientX - startX) / scale}px`;
+    el.style.top = `${top + (e.clientY - startY) / scale}px`;
+    renderWires();
+  }
+  function up() {
+    el.classList.remove('dragging');
+    el.removeEventListener('pointermove', move);
+    el.removeEventListener('pointerup', up);
+  }
+  el.addEventListener('pointermove', move);
+  el.addEventListener('pointerup', up);
+}
+
+function onModuleClick(ev) {
+  if (mode !== 'practice') return;
+  const id = ev.currentTarget.dataset.id;
+  if (!selectedForWire) {
+    selectedForWire = id;
+  } else if (selectedForWire === id) {
+    selectedForWire = null;
+  } else {
+    edges.filter(e => e.from === selectedForWire && e.to === id).forEach(e => visibleWires.add(e.id));
+    selectedForWire = null;
+  }
+  document.querySelectorAll('.module').forEach(m => m.classList.toggle('selected', m.dataset.id === selectedForWire));
+  renderAll();
+}
+
+function standardLayout() {
+  boardView = 'standard';
+  stage.classList.remove('is-blank');
+  Object.entries(moduleDefs).forEach(([id, m]) => {
+    const el = document.querySelector(`.module[data-id="${id}"]`);
+    el.style.left = `${m.x}px`;
+    el.style.top = `${m.y}px`;
+  });
+  showAllWires = false;
+  visibleWires.clear();
+  highlightOn = false;
+  fitStage();
+  renderAll();
+}
+
+function shuffleLayout() {
+  boardView = 'shuffle';
+  stage.classList.remove('is-blank');
+  const ids = Object.keys(moduleDefs);
+  ids.forEach((id, i) => {
+    const el = document.querySelector(`.module[data-id="${id}"]`);
+    el.style.left = `${60 + (i % 5) * 260}px`;
+    el.style.top = `${70 + Math.floor(i / 5) * 230}px`;
+  });
+  showAllWires = false;
+  visibleWires.clear();
+  highlightOn = false;
+  setMode('practice');
+  fitStage();
+  renderAll();
+}
+
+function setMode(next) {
+  mode = next;
+  selectedForWire = null;
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('selected'));
+  renderAll();
+}
+
+function renderSide() {
+  const inst = instructions[instKey];
+  document.getElementById('stepTitle').textContent = inst.steps[step].title;
+  document.getElementById('stepText').textContent = inst.steps[step].text;
+
+  const stepBtns = document.getElementById('stepBtns');
+  stepBtns.innerHTML = '';
+  inst.steps.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.textContent = i + 1;
+    b.className = i === step ? 'active' : '';
+    b.onclick = () => { step = i; highlightOn = true; stopAuto(); setMode('demo'); };
+    stepBtns.appendChild(b);
+  });
+
+  const sig = document.getElementById('signals');
+  sig.innerHTML = '';
+  signalOrder.forEach(k => {
+    const div = document.createElement('div');
+    div.className = 'signal';
+    div.innerHTML = `<span>${k}</span><b>${inst.signals[k]}</b>`;
+    sig.appendChild(div);
+  });
+
+  const checklist = document.getElementById('checklist');
+  checklist.innerHTML = '';
+  edges.forEach(e => {
+    const ok = visibleWires.has(e.id);
+    const row = document.createElement('div');
+    row.className = 'check';
+    row.innerHTML = `<span class="${ok ? 'ok' : 'miss'}">${ok ? 'OK' : '--'}</span><span>${e.label}: ${moduleDefs[e.from].name} -> ${moduleDefs[e.to].name}</span>`;
+    checklist.appendChild(row);
+  });
+  const pct = Math.round(visibleWires.size / edges.length * 100);
+  document.getElementById('completion').textContent = `${pct}%`;
+  document.getElementById('completionBar').style.width = `${pct}%`;
+  fitChecklist();
+}
+
+function fitChecklist() {
+  const details = document.querySelector('details');
+  const checklist = document.getElementById('checklist');
+  if (!details || !checklist) return;
+  if (!details.open) {
+    checklist.style.height = '';
+    checklist.style.maxHeight = '';
+    return;
+  }
+  const summary = details.querySelector('summary');
+  const detailStyle = getComputedStyle(details);
+  const listStyle = getComputedStyle(checklist);
+  const available =
+    details.clientHeight -
+    parseFloat(detailStyle.paddingTop) -
+    parseFloat(detailStyle.paddingBottom) -
+    summary.offsetHeight -
+    parseFloat(listStyle.marginTop);
+  const height = `${Math.max(0, Math.floor(available))}px`;
+  checklist.style.height = height;
+  checklist.style.maxHeight = height;
+}
+
+function stopAuto() {
+  if (autoTimer) clearInterval(autoTimer);
+  autoTimer = null;
+  document.getElementById('autoBtn').textContent = 'Auto';
+}
+
+function toggleAuto() {
+  if (autoTimer) { stopAuto(); return; }
+  setMode('demo');
+  highlightOn = true;
+  document.getElementById('autoBtn').textContent = 'Pause';
+  autoTimer = setInterval(() => {
+    step = (step + 1) % instructions[instKey].steps.length;
+    renderAll();
+  }, 1500);
+}
+
+function renderAll() {
+  renderWires();
+  renderSide();
+}
+
+function init() {
+  createModules();
+  fitStage();
+  window.addEventListener('resize', () => { fitStage(); renderWires(); fitChecklist(); });
+  const sel = document.getElementById('instSelect');
+  Object.entries(instructions).forEach(([key, v]) => {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = v.label;
+    sel.appendChild(opt);
+  });
+  sel.onchange = e => { instKey = e.target.value; step = 0; highlightOn = false; stopAuto(); renderAll(); };
+
+  document.getElementById('standardBtn').onclick = standardLayout;
+  document.getElementById('shuffleBtn').onclick = shuffleLayout;
+  document.getElementById('showWiresBtn').onclick = () => { if (stage.classList.contains('is-blank')) standardLayout(); showAllWires = true; edges.forEach(e => visibleWires.add(e.id)); highlightOn = false; renderAll(); };
+  document.getElementById('clearWiresBtn').onclick = () => { visibleWires.clear(); showAllWires = false; highlightOn = false; setMode('practice'); };
+  document.getElementById('prevBtn').onclick = () => { step = (step - 1 + instructions[instKey].steps.length) % instructions[instKey].steps.length; highlightOn = true; stopAuto(); setMode('demo'); };
+  document.getElementById('nextBtn').onclick = () => { step = (step + 1) % instructions[instKey].steps.length; highlightOn = true; stopAuto(); setMode('demo'); };
+  document.getElementById('autoBtn').onclick = toggleAuto;
+  document.querySelector('details').addEventListener('toggle', fitChecklist);
+  blankCanvas();
+}
+
+init();
+</script>
+</body>
+</html>
